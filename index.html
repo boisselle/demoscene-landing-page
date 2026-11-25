@@ -211,20 +211,20 @@
             <div class="flex items-center gap-3">
                 <div class="font-vt text-xl sm:text-2xl tracking-wider text-glow font-bold flex items-center gap-2">
                     <span class="inline-block w-2.5 h-2.5 bg-current animate-ping"></span>
-                    <span>╔═[0xC0DE // VORTEX_64K]═╗</span>
+                    <span>╔═[0xC0DE // VORTEX_ZINE]═╗</span>
                 </div>
                 <span class="hidden md:inline-block text-xs opacity-80 border-l border-current pl-3">
-                    KERNEL: RING-0_ASCII_VORTEX // BUILD 99.4
+                    UNDERGROUND DEMOSCENE & RING-0 DISPATCH // 5 ISSUES
                 </span>
             </div>
 
             <!-- Center Section Jump Pills -->
             <nav id="nav-Jumpers" class="flex items-center gap-1 sm:gap-1.5 text-xs overflow-x-auto">
-                <button onclick="jumpToSection(0)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-0">0x00:NFO</button>
-                <button onclick="jumpToSection(1)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-1">0x01:64K</button>
-                <button onclick="jumpToSection(2)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-2">0x02:RING0</button>
-                <button onclick="jumpToSection(3)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-3">0x03:KEYGEN</button>
-                <button onclick="jumpToSection(4)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-4">0x04:EOF</button>
+                <button onclick="jumpToSection(0)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-0">POST_01:64K</button>
+                <button onclick="jumpToSection(1)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-1">POST_02:SID</button>
+                <button onclick="jumpToSection(2)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-2">POST_03:CRT</button>
+                <button onclick="jumpToSection(3)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-3">POST_04:ANSI</button>
+                <button onclick="jumpToSection(4)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-4">POST_05:PARTY</button>
             </nav>
 
             <!-- Right Telemetry & Audio Toggle -->
@@ -245,21 +245,46 @@
 
     <!-- Left Timeline & Vortex Ingestion Status Rail -->
     <aside class="fixed left-3 top-1/2 -translate-y-1/2 z-30 hidden lg:flex flex-col items-start gap-2 pointer-events-auto">
-        <div class="box-glow p-2.5 rounded text-xs w-52">
+        <div class="box-glow p-2.5 rounded text-xs w-56">
             <div class="font-vt text-base border-b border-current pb-1 mb-2 flex justify-between">
-                <span>╔═ VORTEX_PIPE ═╗</span>
+                <span>╔═ ZINE_ARCHIVE ═╗</span>
                 <span id="scroll-pct">00%</span>
             </div>
             <div id="timeline-steps" class="flex flex-col gap-1.5 font-mono text-[11px]">
                 <!-- Populated dynamically -->
             </div>
             <div class="mt-2.5 pt-2 border-t border-current/40 text-[10px] opacity-85 leading-tight">
-                <div>▲ SCROLL DOWN: INGEST TOP →</div>
-                <div>▼ SCROLL UP: EJECT CORE ←</div>
+                <div>▲ SCROLL DOWN: INGEST POST →</div>
+                <div>▼ SCROLL UP: EJECT POST ←</div>
                 <div class="mt-1 text-[var(--accent)]" id="physics-state-label">STATE: HARMONIC_ORBIT</div>
             </div>
         </div>
     </aside>
+
+    <!-- Full Blog Post Terminal Reader Modal -->
+    <div id="blog-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md pointer-events-auto">
+        <div class="box-glow rounded max-w-3xl w-full max-h-[86vh] flex flex-col overflow-hidden border-2 border-current">
+            <div class="flex items-center justify-between px-4 py-2.5 border-b border-current bg-black/70">
+                <div class="font-vt text-xl sm:text-2xl text-glow tracking-wider truncate" id="modal-title">
+                    ╔══[ FULL_DISPATCH_READER ]══╗
+                </div>
+                <button onclick="closeBlogModal()" class="ascii-btn px-3 py-0.5 rounded text-xs font-bold">
+                    [X // ESC_CLOSE]
+                </button>
+            </div>
+            <div class="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs sm:text-sm leading-relaxed font-mono" id="modal-content">
+                <!-- Populated dynamically when user opens a blog post -->
+            </div>
+            <div class="px-4 py-2.5 border-t border-current/40 bg-black/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span id="modal-meta" class="text-[var(--secondary)] font-mono">AUTHOR: @0xC0DE // EOF</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="stepModalPost(-1)" class="ascii-btn px-2.5 py-1 rounded">◄ PREV_POST</button>
+                    <button onclick="stepModalPost(1)" class="ascii-btn px-2.5 py-1 rounded">NEXT_POST ►</button>
+                    <button onclick="closeBlogModal()" class="ascii-btn px-3 py-1 rounded font-bold">RETURN_TO_VORTEX</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Right Control Deck (HUD Tweakers) -->
     <aside class="fixed right-3 top-1/2 -translate-y-1/2 z-30 hidden xl:flex flex-col gap-2 pointer-events-auto">
@@ -334,6 +359,61 @@
         <!-- Cards are dynamically injected and positioned along spiral paths into/out of the 3D whirlpool -->
     </main>
 
+    <!-- Full Blog Post CRT Terminal Modal Overlay -->
+    <div id="blog-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md">
+        <div class="box-glow w-full max-w-3xl max-h-[86vh] rounded flex flex-col overflow-hidden border-2 border-[var(--primary)] shadow-2xl">
+            <!-- Modal Titlebar -->
+            <div class="flex items-center justify-between px-4 py-2.5 border-b border-current/40 bg-black/70">
+                <div class="flex items-center gap-2 font-vt text-xl sm:text-2xl text-glow">
+                    <span>╔══[ FULL_TRANSMISSION_READER ]══╗</span>
+                    <span id="modal-post-id" class="text-xs font-mono px-1.5 py-0.5 border border-current text-[var(--accent)]">POST_01</span>
+                </div>
+                <button onclick="closeBlogModal()" class="ascii-btn px-2.5 py-0.5 rounded text-xs font-bold">
+                    [X] ESC_CLOSE
+                </button>
+            </div>
+
+            <!-- Modal Scrollable Article Body -->
+            <div class="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs sm:text-sm leading-relaxed font-mono">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-[var(--secondary)] border-b border-current/25 pb-2">
+                    <span id="modal-meta-author">AUTHOR: @vortex_architect</span>
+                    <span id="modal-meta-date">DATE: 2026.11.24</span>
+                    <span id="modal-meta-tag" class="px-1.5 py-0.5 border border-current text-[var(--accent)]">#64K_RAYMARCH</span>
+                </div>
+
+                <h2 id="modal-title" class="font-vt text-2xl sm:text-4xl text-glow tracking-wide leading-tight"></h2>
+
+                <!-- Modal Procedural Visual Banner Preview -->
+                <div class="border border-current/40 bg-black/70 p-2 rounded">
+                    <canvas id="modal-art-canvas" class="w-full h-44 sm:h-52 block rounded"></canvas>
+                    <div id="modal-art-caption" class="text-[10px] text-[var(--secondary)] mt-1.5 flex justify-between font-mono"></div>
+                </div>
+
+                <!-- Lead 3 Sentences Highlight Box -->
+                <div id="modal-lead-excerpt" class="p-3 border-l-2 border-[var(--accent)] bg-black/50 text-[var(--accent)] text-xs sm:text-sm"></div>
+
+                <!-- Full Article Paragraphs -->
+                <div id="modal-full-body" class="space-y-3.5 text-xs sm:text-sm opacity-95 leading-relaxed"></div>
+            </div>
+
+            <!-- Modal Footer Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 border-t border-current/40 bg-black/75 text-xs">
+                <div class="flex items-center gap-2">
+                    <button onclick="navigateModalPost(-1)" class="ascii-btn px-2.5 py-1 rounded">◄ PREV_POST</button>
+                    <button onclick="navigateModalPost(1)" class="ascii-btn px-2.5 py-1 rounded">NEXT_POST ►</button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="copyPostPermalink()" id="modal-copy-btn" class="ascii-btn px-2.5 py-1 rounded text-[11px]">
+                        COPY_PACKET_URI()
+                    </button>
+                    <button onclick="closeBlogModal()" class="ascii-btn px-3 py-1 rounded font-bold">
+                        RETURN_TO_VORTEX
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bottom Demoscene Sine-Wave Scroller & Mobile Controls -->
     <footer class="fixed bottom-0 left-0 right-0 z-30 p-2 sm:p-3 pointer-events-none flex flex-col gap-1.5">
         <!-- Mobile quick controls bar -->
@@ -358,297 +438,230 @@
 
     <script>
         /***********************************************************************
-         * 1. DEMOSCENE SECTIONS & HACKER TERMINAL DATA
-         * Each section contains 3 modular ASCII blocks positioned around the
-         * central whirlpool. When scrolling down:
-         * - Current section panels spiral inward, fragment into ASCII debris,
-         *   and drop down the Z-axis funnel of the whirlpool.
-         * - Next section panels emerge from the deep vortex center and lock
-         *   into orbit around the viewport.
+         * 1. DEMOSCENE & HACKER BLOG POSTS (3 ORBITAL SQUARES PER ITERATION)
+         * Each scroll iteration represents a blog post broken into 3 orbital squares:
+         *  - Card 0 (Square 1): BLOG POST TITLE & METADATA
+         *  - Card 1 (Square 2): BLOG IMAGE (Procedural CRT Dithered / ASCII Art Canvas)
+         *  - Card 2 (Square 3): FIRST THREE SENTENCES EXCERPT + FULL READER TRIGGER
          ***********************************************************************/
         const SECTIONS = [
             {
-                id: "0x00",
-                code: "INIT_MANIFEST // GREETZ & .NFO",
-                badge: "RELEASE_NFO",
+                id: "POST_01",
+                code: "64K_RAYMARCHING // SIGNED DISTANCE FIELDS",
+                badge: "64K_SHADERS",
+                postTitle: "Squeezing a Whole Cathedral into 64 Kilobytes with Signed Distance Fields",
+                date: "2026-11-21 // 03:14 UTC",
+                author: "handle: @0xC0DE_r00t",
+                readTime: "4 MIN READ",
+                tag: "#GLSL_64K_INTRO",
+                artMode: "sdf_torus",
+                imageCaption: "FIG_01.VRAM // RAYMARCHED_TORUS_KNOT [BAYER_4x4_DITHER]",
+                firstThreeSentences: "Traditional polygon meshes are dead weight when your entire executable budget is strictly capped at 65,536 bytes. By encoding infinite architectural cathedrals as pure mathematical Signed Distance Fields, we trade megabytes of vertex buffers for forty lines of branchless GLSL. Every column, vault, and volumetric god-ray emerges at runtime from modulo domain repetition and Lipschitz-continuous sphere tracing.",
+                fullParagraphs: [
+                    "When newcomers inspect a 64k demoscene intro for the first time, they always ask where the textures and 3D models are hidden on disk. The answer is that they do not exist anywhere on disk—they exist only as equations evaluated sixty times a second inside the fragment shader. A single domain-folding loop (`p = mod(p, c) - 0.5 * c`) turns one primitive box into an endless brutalist megastructure stretching to the far clip plane.",
+                    "To compress the binary further, we strip the standard C runtime library and pass our shader source through a custom GLSL minifier before feeding the raw machine code into `crinkler`. Variable names collapse into single bytes, and trigonometric constants are approximated using polynomial curves that pack cleanly into repeated deflate bitstreams.",
+                    "The real magic happens when you couple the SDF scene distance directly to the Web Audio or tracker envelope registers. As the 140 BPM sub-bass drops, the folding angles mutate on the beat, warping solid stone corridors into liquid non-Euclidean spirals without allocating a single extra byte of heap memory."
+                ],
                 cards: [
                     {
-                        slot: "TOP_LEFT",
-                        angleOffset: 2.35, // radians around vortex
-                        targetX: -275,
-                        targetY: -125,
-                        title: "╔══[ 0x00_A // SCENE_MANIFEST.NFO ]══╗",
-                        asciiArt: [
-                            " ██▒   █▓ ▒█████   ██▀███  ▄▄▄█████▓▓█████ ▒██   ██▒",
-                            "▓██░   █▒▒██▒  ██▒▓██ ▒ ██▒▓  ██▒ ▓▒▓█   ▀ ▒▒ █ █ ▒░",
-                            " ▓██  █▒░▒██░  ██▒▓██ ░▄█ ▒▒ ▓██░ ▒░▒███   ░░  █   ░",
-                            "  ▒██ █░░▒██   ██░▒██▀▀█▄  ░ ▓██▓ ░ ▒▓█  ▄  ░ █ █ ▒ ",
-                            "   ▒▀█░  ░ ████▓▒░░██▓ ▒██▒  ▒██▒ ░ ░▒████▒▒██▒ ▒██▒"
-                        ].join("\n"),
-                        body: "WELCOME TO THE 64K ASCII SINGULARITY. SCROLL DOWN TO WATCH TERMINAL BUFFERS SPIRAL INTO THE GRAVITY WELL While EMERGING PACKETS UNPACK FROM THE CORE.",
-                        actionLabel: "PING_SCENE_NODES()",
-                        actionType: "ping"
-                    },
-                    {
-                        slot: "TOP_RIGHT",
-                        angleOffset: 0.45,
-                        targetX: 275,
-                        targetY: -115,
-                        title: "╔══[ 0x00_B // CREW_GREETINGS.LST ]══╗",
-                        asciiArt: [
-                            "┌────────────────────────────────────┐",
-                            "│ GRP_ID      STATUS    SIGNAL_DB    │",
-                            "├────────────────────────────────────┤",
-                            "│ FARBRAUSCH  [LOCKED]  +99.4 dBm    │",
-                            "│ FUTURE_CREW [ACTIVE]  +96.1 dBm    │",
-                            "│ RAZOR_1911  [RING_0]  +94.8 dBm    │",
-                            "│ FAIRLIGHT   [SYNCED]  +92.0 dBm    │",
-                            "└────────────────────────────────────┘"
-                        ].join("\n"),
-                        body: "RESPECT TO ALL CODERS, GRAPHICIANS & MUSICIANS PUSHING REALTIME PROCEDURAL SHADERS IN 64 KILOBYTES.",
-                        actionLabel: "DECRYPT_NFO_SIGNATURE()",
-                        actionType: "decrypt"
-                    },
-                    {
-                        slot: "BOTTOM_LEFT",
-                        angleOffset: 3.85,
-                        targetX: -240,
-                        targetY: 155,
-                        title: "╔══[ 0x00_C // VORTEX_TELEMETRY ]══╗",
-                        asciiArt: [
-                            "   . · * .  ╭───────────╮  . * · .",
-                            "  *  ───►   │ SINGULAR  │   ◄───  *",
-                            "   ' · . *  ╰─────┬─────╯  * . · '",
-                            "                  ▼ INGESTION_PIPE"
-                        ].join("\n"),
-                        body: "USE MOUSE WHEEL OR TOUCH DRAG. NOTICE HOW THIS TERMINAL FRAME TWISTS ALONG LOGARITHMIC SPIRAL r(θ) = a·e^(bθ) INTO THE SINGULARITY.",
-                        actionLabel: "INGEST_THIS_LAYER_NOW ▼",
-                        actionType: "next"
-                    }
-                ]
-            },
-            {
-                id: "0x01",
-                code: "SHADER_VORTEX // 64K INTRO ENGINE",
-                badge: "GLSL_RAYMARCH",
-                cards: [
-                    {
-                        slot: "TOP_LEFT",
-                        angleOffset: 2.5,
-                        targetX: -280,
-                        targetY: -120,
-                        title: "╔══[ 0x01_A // LOGARITHMIC_FUNNEL.GLSL ]══╗",
-                        asciiArt: [
-                            "// VERTEX DISPLACEMENT KERNEL",
-                            "float r = length(pos.xy);",
-                            "float theta = atan(pos.y, pos.x);",
-                            "theta += uTime * (4.0 / (r + 0.35));",
-                            "float zDepth = -pow(1.8 / (r + 0.2), 1.6);"
-                        ].join("\n"),
-                        body: "THE CENTRAL WHIRLPOOL COMBINES 4,500 CUSTOM SHADER PARTICLES WITH 650 INSTANCED ASCII GLYPH QUADS ORBITING KEPLERIAN VELOCITY CURVES.",
-                        actionLabel: "OVERCLOCK_VORTEX_SPIN()",
-                        actionType: "warp"
-                    },
-                    {
-                        slot: "TOP_RIGHT",
-                        angleOffset: 0.55,
-                        targetX: 280,
-                        targetY: -110,
-                        title: "╔══[ 0x01_B // ASCII_ATLAS_SAMPLER ]══╗",
-                        asciiArt: [
-                            "CHARSET: [ 0 1 # $ @ % & * + = - ~ ^ ]",
-                            "┌───┬───┬───┬───┬───┬───┬───┬───┐",
-                            "│ @ │ # │ $ │ % │ & │ 0 │ 1 │ * │",
-                            "└───┴───┴───┴───┴───┴───┴───┴───┘",
-                            "MIPMAP_GEN: PROCEDURAL_CANVAS_2D"
-                        ].join("\n"),
-                        body: "ZERO EXTERNAL TEXTURES LOADED. EVERY ASCII SPRITE IN THE 3D SWIRL IS SAMPLED FROM A DYNAMICALLY RASTERIZED 16x4 FONT ATLAS IN VRAM.",
-                        actionLabel: "SCRAMBLE_GLYPH_BUFFER()",
-                        actionType: "scramble"
-                    },
-                    {
-                        slot: "BOTTOM_RIGHT",
-                        angleOffset: 5.4,
-                        targetX: 245,
-                        targetY: 155,
-                        title: "╔══[ 0x01_C // COPPER_RASTER_TIMING ]══╗",
-                        asciiArt: [
-                            "SCANLINE 012: ████████████▒▒▒▒░░ [60Hz]",
-                            "SCANLINE 128: ░░▒▒▒▒████████████ [LOCK]",
-                            "VBLANK_IRQ  : 0x00FF41 -> 0x00F0FF"
-                        ].join("\n"),
-                        body: "SYNCHRONIZED TO VBLANK INTERRUPT. SCROLL FURTHER TO WATCH THE 64K ENGINE COLLAPSE INTO THE EVENT HORIZON.",
-                        actionLabel: "DIVE_TO_RING0_MATRIX ▼",
-                        actionType: "next"
-                    }
-                ]
-            },
-            {
-                id: "0x02",
-                code: "PHREAK_MATRICES // RING-0 EXPLOITS",
-                badge: "KERNEL_DUMP",
-                cards: [
-                    {
-                        slot: "TOP_LEFT",
-                        angleOffset: 2.2,
-                        targetX: -275,
-                        targetY: -125,
-                        title: "╔══[ 0x02_A // HEX_MEMORY_SINKHOLE ]══╗",
-                        asciiArt: [
-                            "0x7FFF0010: 48 89 E5 48 83 EC 20 89  H..H.. .",
-                            "0x7FFF0018: 7D FC 48 89 75 F0 C7 45  }.H.u..E",
-                            "0x7FFF0020: FC 00 FF 41 00 90 90 90  ...A....",
-                            "0x7FFF0028: EB FE CC CC C0 DE 7F 00  ........"
-                        ].join("\n"),
-                        body: "LIVE STACK POINTER REDIRECTED TO THE VORTEX CORE. BYTES PULLED PAST EVENT HORIZON UNDERGO BITWISE XOR ROTATION.",
-                        actionLabel: "INJECT_NOP_SLED()",
-                        actionType: "hexmutate"
-                    },
-                    {
-                        slot: "BOTTOM_LEFT",
-                        angleOffset: 3.9,
-                        targetX: -265,
-                        targetY: 145,
-                        title: "╔══[ 0x02_B // BLUEBOX_2600HZ_PHREAK ]══╗",
-                        asciiArt: [
-                            "FREQS: [2600Hz] ──┬── [KP1: 1100+1700Hz]",
-                            "                  └── [ST : 1500+1700Hz]",
-                            "TRUNK_STATE: SEIZED // OPERATOR_BYPASS"
-                        ].join("\n"),
-                        body: "ACOUSTIC COUPLER LINKED TO WEB AUDIO SYNTH. CLICK BELOW TO EMIT A 2600HZ TRUNK SEIZURE CHIRP ACROSS THE VORTEX.",
-                        actionLabel: "EMIT_2600HZ_TONE()",
-                        actionType: "tone2600"
-                    },
-                    {
-                        slot: "TOP_RIGHT",
-                        angleOffset: 0.6,
-                        targetX: 275,
-                        targetY: -100,
-                        title: "╔══[ 0x02_C // ROOTKIT_INTERRUPT_IDT ]══╗",
-                        asciiArt: [
-                            "╔══════════════════════════════════╗",
-                            "║ INT 0x80 -> HOOKED [VORTEX_SYS]  ║",
-                            "║ CR0_WP   -> 0 (WRITE_UNLOCKED)   ║",
-                            "║ SMEP/SMAP-> BYPASSED VIA ROP     ║",
-                            "╚══════════════════════════════════╝"
-                        ].join("\n"),
-                        body: "PRIVILEGE ESCALATION COMPLETE. ALL DOM NODES AND GLSL BUFFERS ARE NOW RUNNING AT RING-0.",
-                        actionLabel: "PROCEED_TO_CRACKTRO ▼",
-                        actionType: "next"
-                    }
-                ]
-            },
-            {
-                id: "0x03",
-                code: "WAREZ_CRACKTRO // KEYGEN & CHIPTUNE",
-                badge: "KEYGEN_SYNTH",
-                cards: [
-                    {
-                        slot: "TOP_LEFT",
-                        angleOffset: 2.4,
-                        targetX: -275,
-                        targetY: -120,
-                        title: "╔══[ 0x03_A // ELLIPTIC_SERIAL_KEYGEN ]══╗",
-                        asciiArt: [
-                            "┌─────────────────────────────────────┐",
-                            "│ USER: SCENE_OPERATIVE_99            │",
-                            "│ HASH: 0x9F4A-C0DE-64KB-7F00-7731    │",
-                            "│ ALGO: Ed25519_VORTEX_CURVE          │",
-                            "└─────────────────────────────────────┘"
-                        ].join("\n"),
-                        body: "GENERATE DETERMINISTIC DEMOSCENE INVITATION KEYS SEEDED BY THE CURRENT ANGULAR MOMENTUM OF THE 3D WHIRLPOOL.",
-                        actionLabel: "GENERATE_NEW_SERIAL()",
-                        actionType: "keygen"
-                    },
-                    {
-                        slot: "TOP_RIGHT",
-                        angleOffset: 0.5,
-                        targetX: 275,
-                        targetY: -115,
-                        title: "╔══[ 0x03_B // YM2149_ARPEGGIO_TRACKER ]══╗",
-                        asciiArt: [
-                            "ROW | CH1:PULSE | CH2:BASS  | CH3:NOISE",
-                            "----+-----------+-----------+----------",
-                            "00  | C-5 01 F  | C-2 02 F  | --- -- - ",
-                            "01  | D#5 01 C  | --- -- -  | C-4 03 8 ",
-                            "02  | G-5 01 C  | G-2 02 E  | --- -- - ",
-                            "03  | A#5 01 A  | --- -- -  | F-4 03 6 "
-                        ].join("\n"),
-                        body: "REALTIME PROCEDURAL WEB AUDIO API CHIPTUNE SEQUENCER. TOGGLE AUDIO IN THE TOP HUD OR TRIGGER A SYNTH DROP BELOW.",
-                        actionLabel: "TOGGLE_CHIPTUNE_TRACKER ♪",
-                        actionType: "audio"
-                    },
-                    {
-                        slot: "BOTTOM_RIGHT",
-                        angleOffset: 5.5,
-                        targetX: 250,
-                        targetY: 150,
-                        title: "╔══[ 0x03_C // VECTOR_BOB_CREDITS ]══╗",
-                        asciiArt: [
-                            "CODE + SHADERS :: VORTEX_ARCHITECT",
-                            "ASCII + ANSI   :: PHOSPHOR_MONK",
-                            "CHIP_SYNTH     :: SID_ALCHEMIST"
-                        ].join("\n"),
-                        body: "100% PURE VANILLA JAVASCRIPT + THREE.JS + GLSL. ZERO EXTERNAL AUDIO OR IMAGE ASSETS.",
-                        actionLabel: "ENTER_EOF_TRANSMISSION ▼",
-                        actionType: "next"
-                    }
-                ]
-            },
-            {
-                id: "0x04",
-                code: "EOF_TRANSMISSION // JOIN THE SCENE",
-                badge: "EOF_UPLINK",
-                cards: [
-                    {
+                        boxRole: "title",
                         slot: "TOP_LEFT",
                         angleOffset: 2.35,
-                        targetX: -275,
-                        targetY: -115,
-                        title: "╔══[ 0x04_A // BBS_DIALUP_UPLINK ]══╗",
-                        asciiArt: [
-                            "ATDT +1-555-0xC0DE-64K",
-                            "CONNECT 115200 / V.92 / ARQ",
-                            "╔═════════════════════════════════╗",
-                            "║  WELCOME TO SINGULARITY BBS     ║",
-                            "║  NODES: 64/64  RATIO: 1:3 LEECH ║",
-                            "╚═════════════════════════════════╝"
-                        ].join("\n"),
-                        body: "YOU HAVE REACHED THE DEEPEST LAYER OF THE WHIRLPOOL. SCROLL UP TO REVERSE POLARITY AND EJECT PREVIOUS LAYERS FROM THE CORE.",
-                        actionLabel: "TRANSMIT_SYSOP_PACKET()",
-                        actionType: "transmit"
+                        targetX: -285,
+                        targetY: -125,
+                        title: "╔══[ BOX_01 // POST_TITLE.HDR ]══╗"
                     },
                     {
+                        boxRole: "image",
+                        slot: "TOP_RIGHT",
+                        angleOffset: 0.45,
+                        targetX: 285,
+                        targetY: -115,
+                        title: "╔══[ BOX_02 // CRT_DITHER_IMG.VRAM ]══╗"
+                    },
+                    {
+                        boxRole: "excerpt",
+                        slot: "BOTTOM_CENTER",
+                        angleOffset: 3.85,
+                        targetX: -30,
+                        targetY: 165,
+                        title: "╔══[ BOX_03 // LEAD_3_SENTENCES.TXT ]══╗"
+                    }
+                ]
+            },
+            {
+                id: "POST_02",
+                code: "CHIP_DUBSTEP // YM2149 MEETS 140BPM WOBBLE",
+                badge: "CHIP_AUDIO",
+                postTitle: "Hybridizing 1985 YM2149 Square-Wave Trackers with 140 BPM Dubstep Formant Growls",
+                date: "2026-11-14 // 23:42 UTC",
+                author: "handle: @sid_alchemist",
+                readTime: "5 MIN READ",
+                tag: "#SYNTH_TRACKER",
+                artMode: "osc_wobble",
+                imageCaption: "FIG_02.VRAM // LFO_FORMANT_SPECTRUM [140BPM_SYNC]",
+                firstThreeSentences: "Early home computer sound chips like the Atari ST's YM2149 and the Commodore 64's MOS 6581 SID were never designed to produce modern sub-bass pressure. Yet when you pair 50Hz PAL three-voice chip arpeggios with a dual-detuned 80s Reese sawtooth and a tempo-synced vowel formant filter, the contrast is electric. The razor-thin 8-bit square harmonics slice right through the middle of a heavy half-time gated snare mix.",
+                fullParagraphs: [
+                    "In classic European tracker music, chords were simulated by cycling a single square-wave channel between root, minor third, and fifth every 20 milliseconds. That rapid 50Hz pitch modulation creates a distinct metallic shimmer that occupies the 1.5kHz to 6kHz band without muddying the low end.",
+                    "That leaves the 35Hz to 250Hz sub-octave completely wide open for modern dubstep sound design. By routing two detuned sawtooth oscillators and a pure sine sub into a resonant biquad low-pass filter paired with a peaking vowel formant filter around 1.2kHz, we can sweep an LFO at 1/8-triplet and 1/16 rates to create talking 'YOI' bass growls.",
+                    "Add an 80s LinnDrum-inspired gated noise snare on beat three and descending Simmons SDS-V hexagonal tom fills on the fourth bar turnaround, and you get a synthesis engine that sounds simultaneously like a 1987 cracktro and a 2026 underground warehouse sound system."
+                ],
+                cards: [
+                    {
+                        boxRole: "title",
+                        slot: "TOP_LEFT",
+                        angleOffset: 2.5,
+                        targetX: -285,
+                        targetY: -120,
+                        title: "╔══[ BOX_01 // POST_TITLE.HDR ]══╗"
+                    },
+                    {
+                        boxRole: "image",
+                        slot: "TOP_RIGHT",
+                        angleOffset: 0.55,
+                        targetX: 285,
+                        targetY: -110,
+                        title: "╔══[ BOX_02 // CRT_DITHER_IMG.VRAM ]══╗"
+                    },
+                    {
+                        boxRole: "excerpt",
+                        slot: "BOTTOM_CENTER",
+                        angleOffset: 5.4,
+                        targetX: 20,
+                        targetY: 165,
+                        title: "╔══[ BOX_03 // LEAD_3_SENTENCES.TXT ]══╗"
+                    }
+                ]
+            },
+            {
+                id: "POST_03",
+                code: "PHOSPHOR_BLOOM // CRT SCANLINE OPTICS",
+                badge: "CRT_OPTICS",
+                postTitle: "Why Raw Pixel Art Looks Wrong on OLEDs: Simulating Shadow-Mask Phosphor Decay",
+                date: "2026-11-05 // 19:08 UTC",
+                author: "handle: @phosphor_monk",
+                readTime: "6 MIN READ",
+                tag: "#CRT_SHADERS",
+                artMode: "crt_beam",
+                imageCaption: "FIG_03.VRAM // ELECTRON_BEAM_RASTER [P22_PHOSPHOR]",
+                firstThreeSentences: "Low-resolution ANSI and pixel graphics were never meant to be viewed as razor-sharp little squares on a modern 4K glass panel. On a real 15kHz Sony Trinitron or Commodore 1084S monitor, adjacent scanlines bled into one another through Gaussian electron-beam bloom and aperture-grille phosphor persistence. Rebuilding that analog optical warmth in WebGL requires modeling non-linear gamma curves and horizontal signal ringing.",
+                fullParagraphs: [
+                    "When an electron gun sweeps across a curved cathode-ray tube, the beam spot size expands dynamically with luminance. A bright green `0x00FF41` ASCII glyph physically spills over into the dark blanking gap above and below its scanline, softening jagged diagonal staircases into smooth organic curves.",
+                    "Most hasty CRT post-processing filters merely slap a 50% black horizontal stripe overlay on top of the framebuffer, which crushes brightness in half and makes text fatiguing to read. The proper approach applies a brightness-dependent Gaussian kernel horizontally while keeping vertical scanline gaps proportional to local luma.",
+                    "Even in a lightweight DOM + WebGL hybrid interface, combining subtle chromatic aberration during high-velocity scroll events with authentic P22 green, amber monochrome, and Amiga AGA palettes immediately restores the tactile depth of working at a warm terminal at 3:00 AM."
+                ],
+                cards: [
+                    {
+                        boxRole: "title",
+                        slot: "TOP_LEFT",
+                        angleOffset: 2.2,
+                        targetX: -285,
+                        targetY: -125,
+                        title: "╔══[ BOX_01 // POST_TITLE.HDR ]══╗"
+                    },
+                    {
+                        boxRole: "image",
+                        slot: "TOP_RIGHT",
+                        angleOffset: 0.6,
+                        targetX: 285,
+                        targetY: -110,
+                        title: "╔══[ BOX_02 // CRT_DITHER_IMG.VRAM ]══╗"
+                    },
+                    {
+                        boxRole: "excerpt",
+                        slot: "BOTTOM_CENTER",
+                        angleOffset: 3.9,
+                        targetX: -25,
+                        targetY: 165,
+                        title: "╔══[ BOX_03 // LEAD_3_SENTENCES.TXT ]══╗"
+                    }
+                ]
+            },
+            {
+                id: "POST_04",
+                code: "ANSI_UNDERGROUND // 14.4K BAUD BBS ARTPACKS",
+                badge: "BBS_HISTORY",
+                postTitle: "The Lost Architecture of 1990s ANSI Artpacks and 14.4k Baud SysOp Citadels",
+                date: "2026-10-28 // 01:55 UTC",
+                author: "handle: @acid_courier",
+                readTime: "5 MIN READ",
+                tag: "#ANSI_ARTSCENE",
+                artMode: "ansi_bbs",
+                imageCaption: "FIG_04.VRAM // CP437_BLOCK_MATRIX [115200_BAUD]",
+                firstThreeSentences: "Before the commercial web flattened digital spaces into uniform white rectangles, logging into a private Bulletin Board System felt like docking with an orbital space station. Every login screen was a hand-crafted 80-column masterpiece assembled block-by-block from IBM Code Page 437 half-shading glyphs (`░▒▓█`) and sixteen hardware VGA colors. Art groups competed monthly to release ZIP artpacks whose scrolling `.ANS` files pushed terminal emulators to their absolute limits.",
+                fullParagraphs: [
+                    "Equipped with tools like TheDraw and AcidDraw, ANSI artists discovered that by interleaving foreground and background attributes across `▀` and `▄` half-block characters, they could effectively double vertical resolution while dithering smooth gradients out of just sixteen fixed palette registers.",
+                    "Courier crews raced across international phone trunks using BlueBox 2600Hz tones and Calling Card loops to upload the latest release packs to Elite boards before rival groups could claim first distribution. The `.NFO` file accompanying every release became an art form in its own right—combining intricate ASCII typography, crew rosters, and encrypted greetings.",
+                    "By bringing CP437 aesthetics into a 3D gravitational whirlpool where panels physically spiral into and out of a singularity as you scroll, we pay homage to that golden era when every screen transition felt like an event."
+                ],
+                cards: [
+                    {
+                        boxRole: "title",
+                        slot: "TOP_LEFT",
+                        angleOffset: 2.4,
+                        targetX: -285,
+                        targetY: -120,
+                        title: "╔══[ BOX_01 // POST_TITLE.HDR ]══╗"
+                    },
+                    {
+                        boxRole: "image",
                         slot: "TOP_RIGHT",
                         angleOffset: 0.5,
-                        targetX: 275,
+                        targetX: 285,
                         targetY: -115,
-                        title: "╔══[ 0x04_B // DEMOPARTY_INVITATION ]══╗",
-                        asciiArt: [
-                            "PARTY : REVISION / ASSEMBLY / EVOKE",
-                            "COMPO : PC 64K INTRO & ANSI/ASCII",
-                            "COORD : 52.3759° N, 9.7320° E",
-                            "STATUS: [INVITATION_VERIFIED]"
-                        ].join("\n"),
-                        body: "BRING YOUR SHADERS, YOUR CRT MONITORS, AND YOUR FASTEST ASM ROUTINES. THE SCENE NEVER DIES.",
-                        actionLabel: "COPY_BBS_INVITE_KEY()",
-                        actionType: "copy"
+                        title: "╔══[ BOX_02 // CRT_DITHER_IMG.VRAM ]══╗"
                     },
                     {
-                        slot: "BOTTOM_LEFT",
+                        boxRole: "excerpt",
+                        slot: "BOTTOM_CENTER",
+                        angleOffset: 5.5,
+                        targetX: 25,
+                        targetY: 165,
+                        title: "╔══[ BOX_03 // LEAD_3_SENTENCES.TXT ]══╗"
+                    }
+                ]
+            },
+            {
+                id: "POST_05",
+                code: "DEMOPARTY_DEADLINE // REVISION COMPO WAR STORY",
+                badge: "PARTY_LORE",
+                postTitle: "Four Minutes to Compo Deadline: Debugging a Ring-0 Shader Crash on the Big Screen",
+                date: "2026-10-12 // 04:20 UTC",
+                author: "handle: @Copper_Raster",
+                readTime: "7 MIN READ",
+                tag: "#DEMOPARTY_LORE",
+                artMode: "vortex_singular",
+                imageCaption: "FIG_05.VRAM // SINGULARITY_ATTRACTOR [COMPO_BUILD]",
+                firstThreeSentences: "Nothing in software engineering compares to the adrenaline of sitting in a darkened sports arena with two thousand demosceners while your intro refuses to link four minutes before the competition deadline. Our final particle whirlpool pass had triggered a driver watchdog timeout on the compo machine's GPU because an unrolled logarithmic spiral loop failed to terminate at `r = 0.0`. With ninety seconds left on the organizer's stopwatch, we patched an epsilon guard (`r + 0.28`) straight into the minified shader string and sprinted the USB stick to the front desk.",
+                fullParagraphs: [
+                    "When the lights dimmed and our 64-kilobyte binary launched on the forty-foot projector screen, you could feel the entire hall lock into the 140 BPM sub-bass kick through the concrete floor. For three unbroken minutes, 4,800 particles and hundreds of instanced ASCII glyphs swirled into the gravitational sinkhole without dropping a single frame below 60Hz.",
+                    "That is the enduring soul of the demoscene: imposing seemingly impossible technical constraints on yourself simply to prove that human ingenuity and tight mathematics can still make silicon sing.",
+                    "Thank you for reading the `0xC0DE // VORTEX_ZINE` transmissions. Use the controls on the right to tweak the whirlpool gravity, switch CRT phosphor palettes, or rewind the singularity back to `POST_01`."
+                ],
+                cards: [
+                    {
+                        boxRole: "title",
+                        slot: "TOP_LEFT",
+                        angleOffset: 2.35,
+                        targetX: -285,
+                        targetY: -115,
+                        title: "╔══[ BOX_01 // POST_TITLE.HDR ]══╗"
+                    },
+                    {
+                        boxRole: "image",
+                        slot: "TOP_RIGHT",
+                        angleOffset: 0.5,
+                        targetX: 285,
+                        targetY: -115,
+                        title: "╔══[ BOX_02 // CRT_DITHER_IMG.VRAM ]══╗"
+                    },
+                    {
+                        boxRole: "excerpt",
+                        slot: "BOTTOM_CENTER",
                         angleOffset: 3.9,
-                        targetX: -245,
-                        targetY: 150,
-                        title: "╔══[ 0x04_C // LOOP_SINGULARITY_RESET ]══╗",
-                        asciiArt: [
-                            "   ╭──────────────────────────────╮",
-                            "   │  JMP 0x0000 // REBOOT_INTRO  │",
-                            "   ╰──────────────┬───────────────╯",
-                            "                  └──► [VORTEX_CORE]"
-                        ].join("\n"),
-                        body: "REWIND THE VORTEX TIMELINE TO WATCH ALL FIVE HACKER MODULES SPIRAL BACK OUT FROM THE EVENT HORIZON.",
-                        actionLabel: "⏪ REWIND_TO_0x00_MANIFEST",
-                        actionType: "rewind"
+                        targetX: 0,
+                        targetY: 165,
+                        title: "╔══[ BOX_03 // LEAD_3_SENTENCES.TXT ]══╗"
                     }
                 ]
             }
@@ -685,15 +698,22 @@
         };
 
         /***********************************************************************
-         * 3. BUILD DOM CARDS & TIMELINE HUD
+         * 3. BUILD DOM CARDS (3 BLOG SQUARES PER ITERATION) & TIMELINE HUD
+         *  - Square 1 (boxRole === 'title'): Blog Post Title + Author/Date/Tag Metadata
+         *  - Square 2 (boxRole === 'image'): Animated CRT Dithered / ASCII Art Canvas
+         *  - Square 3 (boxRole === 'excerpt'): First Three Sentences + Full Article Reader Button
          ***********************************************************************/
         const stageEl = document.getElementById('vortex-stage');
         const timelineStepsEl = document.getElementById('timeline-steps');
-        const cardElements = []; // { sectionIndex, cardIndex, el, preEl, statusEl, data }
+        const cardElements = []; // { sectionIndex, cardIndex, el, statusEl, data, artCanvas, ditherMode }
+        const blogArtCanvases = []; // { canvas, ctx, sectionIndex, mode, asciiMode }
+        let activeModalSectionIdx = 0;
 
         function initDOMSections() {
             stageEl.innerHTML = '';
             timelineStepsEl.innerHTML = '';
+            cardElements.length = 0;
+            blogArtCanvases.length = 0;
 
             SECTIONS.forEach((sec, sIdx) => {
                 // Build Left Rail Timeline indicator
@@ -702,45 +722,129 @@
                 stepDiv.className = 'px-1.5 py-1 rounded border border-transparent cursor-pointer transition-all flex items-center justify-between';
                 stepDiv.onclick = () => jumpToSection(sIdx);
                 stepDiv.innerHTML = `
-                    <span>[${sec.id}] ${sec.badge}</span>
+                    <span class="truncate pr-1">[${sec.id}] ${sec.badge}</span>
                     <span class="rail-state text-[10px] opacity-75">WAIT</span>
                 `;
                 timelineStepsEl.appendChild(stepDiv);
 
-                // Build Cards for this section
+                // Build the 3 Blog Squares for this post iteration
                 sec.cards.forEach((card, cIdx) => {
                     const cardEl = document.createElement('article');
-                    cardEl.className = 'vortex-card box-glow rounded p-3 text-xs flex flex-col gap-2';
-                    cardEl.innerHTML = `
-                        <div class="flex items-center justify-between border-b border-current/40 pb-1 font-vt text-base tracking-wide text-glow">
-                            <span>${card.title}</span>
-                            <span class="text-[10px] font-mono px-1 border border-current">${sec.id}</span>
-                        </div>
-                        <pre class="font-mono text-[10px] sm:text-[11px] leading-tight overflow-x-auto p-2 bg-black/60 border border-current/25 text-[var(--secondary)]">${card.asciiArt}</pre>
-                        <p class="text-[11px] leading-relaxed opacity-90">${card.body}</p>
-                        <div class="flex items-center justify-between pt-1 border-t border-current/30 gap-2">
-                            <span class="card-status text-[10px] font-mono text-[var(--accent)] truncate">[READY // ORBIT_LOCK]</span>
-                            <button class="ascii-btn px-2.5 py-1 rounded text-[10px] font-bold whitespace-nowrap" data-sec="${sIdx}" data-card="${cIdx}">
-                                ${card.actionLabel}
-                            </button>
-                        </div>
-                    `;
+                    // Slightly wider for the 3-sentence excerpt card at bottom center
+                    const widthClass = card.boxRole === 'excerpt' ? 'w-[435px]' : 'w-[375px]';
+                    cardEl.className = `vortex-card ${widthClass} box-glow rounded p-3 text-xs flex flex-col gap-2`;
 
-                    const btn = cardEl.querySelector('button');
-                    const preEl = cardEl.querySelector('pre');
+                    if (card.boxRole === 'title') {
+                        // SQUARE 1: BLOG POST TITLE & METADATA
+                        cardEl.innerHTML = `
+                            <div class="flex items-center justify-between border-b border-current/40 pb-1 font-vt text-base tracking-wide text-glow">
+                                <span>${card.title}</span>
+                                <span class="text-[10px] font-mono px-1.5 border border-current text-[var(--accent)]">${sec.id}</span>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-between gap-1 text-[10px] font-mono text-[var(--secondary)] bg-black/60 px-2 py-1 border border-current/25">
+                                <span>${sec.date}</span>
+                                <span>•</span>
+                                <span>${sec.readTime}</span>
+                            </div>
+                            <h2 class="font-vt text-2xl sm:text-[26px] leading-none tracking-wide text-glow py-1">
+                                ${sec.postTitle}
+                            </h2>
+                            <div class="flex items-center justify-between text-[10px] font-mono opacity-85 pt-0.5">
+                                <span>${sec.author}</span>
+                                <span class="px-1.5 py-0.5 border border-current/50 text-[var(--accent)]">${sec.tag}</span>
+                            </div>
+                            <div class="flex items-center justify-between pt-1.5 border-t border-current/30 gap-2">
+                                <span class="card-status text-[10px] font-mono text-[var(--accent)] truncate">[SQUARE_01 // TITLE_NODE]</span>
+                                <button class="ascii-btn px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap" data-action="open-modal">
+                                    OPEN_ENTRY ↗
+                                </button>
+                            </div>
+                        `;
+                        cardEl.querySelector('[data-action="open-modal"]').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openBlogModal(sIdx);
+                        });
+                    } else if (card.boxRole === 'image') {
+                        // SQUARE 2: PROCEDURAL CRT DITHERED / ASCII BLOG IMAGE
+                        cardEl.innerHTML = `
+                            <div class="flex items-center justify-between border-b border-current/40 pb-1 font-vt text-base tracking-wide text-glow">
+                                <span>${card.title}</span>
+                                <span class="text-[10px] font-mono px-1 border border-current">VRAM_${sIdx + 1}</span>
+                            </div>
+                            <div class="relative bg-black/80 border border-current/40 rounded overflow-hidden">
+                                <canvas class="w-full h-36 block cursor-pointer" title="Click to toggle ASCII / CRT Shader Mode"></canvas>
+                                <div class="absolute top-1.5 left-1.5 bg-black/80 border border-current/40 px-1.5 py-0.5 text-[9px] font-mono text-[var(--accent)] pointer-events-none">
+                                    <span class="render-mode-badge">MODE: CRT_VECTOR_DITHER</span>
+                                </div>
+                            </div>
+                            <div class="text-[10px] font-mono text-[var(--secondary)] truncate">
+                                ${sec.imageCaption}
+                            </div>
+                            <div class="flex items-center justify-between pt-1 border-t border-current/30 gap-2">
+                                <span class="card-status text-[10px] font-mono text-[var(--accent)] truncate">[SQUARE_02 // IMG_BUFFER]</span>
+                                <button class="ascii-btn px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap" data-action="toggle-shader">
+                                    TOGGLE_ASCII_DITHER()
+                                </button>
+                            </div>
+                        `;
+
+                        const artCanvas = cardEl.querySelector('canvas');
+                        const badgeEl = cardEl.querySelector('.render-mode-badge');
+                        const artEntry = {
+                            canvas: artCanvas,
+                            ctx: artCanvas.getContext('2d'),
+                            sectionIndex: sIdx,
+                            mode: sec.artMode,
+                            asciiMode: false
+                        };
+                        blogArtCanvases.push(artEntry);
+
+                        const toggleFn = (e) => {
+                            e.stopPropagation();
+                            artEntry.asciiMode = !artEntry.asciiMode;
+                            badgeEl.textContent = artEntry.asciiMode ? 'MODE: CP437_ASCII_MATRIX' : 'MODE: CRT_VECTOR_DITHER';
+                            playBlipSound(artEntry.asciiMode ? 1240 : 820, 0.07);
+                        };
+                        artCanvas.addEventListener('click', toggleFn);
+                        cardEl.querySelector('[data-action="toggle-shader"]').addEventListener('click', toggleFn);
+                    } else {
+                        // SQUARE 3: FIRST THREE SENTENCES OF THE BLOG POST
+                        cardEl.innerHTML = `
+                            <div class="flex items-center justify-between border-b border-current/40 pb-1 font-vt text-base tracking-wide text-glow">
+                                <span>${card.title}</span>
+                                <span class="text-[10px] font-mono px-1 border border-current">3_SENTENCES</span>
+                            </div>
+                            <div class="p-2.5 bg-black/65 border-l-2 border-[var(--secondary)] text-[11px] sm:text-xs leading-relaxed font-mono opacity-95">
+                                ${sec.firstThreeSentences}
+                            </div>
+                            <div class="flex items-center justify-between pt-1 border-t border-current/30 gap-2">
+                                <span class="card-status text-[10px] font-mono text-[var(--accent)] truncate">[SQUARE_03 // EXCERPT_LOCK]</span>
+                                <div class="flex items-center gap-1.5">
+                                    <button class="ascii-btn px-2.5 py-1 rounded text-[10px] font-bold whitespace-nowrap" data-action="read-more">
+                                        [ READ_FULL_POST // + ]
+                                    </button>
+                                    <button class="ascii-btn px-2 py-1 rounded text-[10px] whitespace-nowrap" data-action="next-post" title="Ingest into Whirlpool & Load Next Post">
+                                        ▼ NEXT
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        cardEl.querySelector('[data-action="read-more"]').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openBlogModal(sIdx);
+                        });
+                        cardEl.querySelector('[data-action="next-post"]').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            ingestCurrentAndAdvance();
+                        });
+                    }
+
                     const statusEl = cardEl.querySelector('.card-status');
-
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        handleCardAction(card.actionType, preEl, statusEl, sIdx);
-                    });
-
                     stageEl.appendChild(cardEl);
                     cardElements.push({
                         sectionIndex: sIdx,
                         cardIndex: cIdx,
                         el: cardEl,
-                        preEl,
                         statusEl,
                         data: card
                     });
@@ -749,84 +853,241 @@
         }
 
         /***********************************************************************
-         * 4. INTERACTIVE TERMINAL SUB-MODULE ACTIONS
+         * 4. BLOG MODAL READER & PROCEDURAL CRT/ASCII BLOG IMAGE RENDERER
          ***********************************************************************/
-        function handleCardAction(type, preEl, statusEl, sIdx) {
-            playBlipSound(660, 0.07);
-            if (type === 'next') {
-                jumpToSection(Math.min(SECTIONS.length - 1, sIdx + 1));
-                statusEl.textContent = '[FLUSHING -> VORTEX_CORE]';
-            } else if (type === 'rewind') {
-                jumpToSection(0);
-                triggerHyperWarp();
-            } else if (type === 'warp') {
-                triggerHyperWarp();
-                statusEl.textContent = '[SINGULARITY_OVERCLOCKED!]';
-            } else if (type === 'ping') {
-                const ms = (Math.random() * 4 + 0.4).toFixed(2);
-                statusEl.textContent = `[PONG: 64 BYTES IN ${ms}ms // TTL=64]`;
-                triggerMiniGlitch(preEl);
-            } else if (type === 'decrypt') {
-                statusEl.textContent = '[RSA-4096 SIGNATURE: VALID_SCENE_REL]';
-                triggerMiniGlitch(preEl);
-            } else if (type === 'scramble') {
-                const glyphs = "01#$@%&*+=-~^!?/\\|<>";
-                const lines = preEl.textContent.split('\n');
-                preEl.textContent = lines.map((l, idx) => {
-                    if (idx === 2) {
-                        let row = "│";
-                        for (let i = 0; i < 8; i++) {
-                            const g = glyphs[Math.floor(Math.random() * glyphs.length)];
-                            row += ` ${g} │`;
+        function openBlogModal(sectionIndex) {
+            activeModalSectionIdx = sectionIndex;
+            const sec = SECTIONS[sectionIndex];
+            if (!sec) return;
+
+            playBlipSound(960, 0.09);
+            document.getElementById('modal-post-id').textContent = sec.id;
+            document.getElementById('modal-meta-author').textContent = sec.author.toUpperCase();
+            document.getElementById('modal-meta-date').textContent = `${sec.date} // ${sec.readTime}`;
+            document.getElementById('modal-meta-tag').textContent = sec.tag;
+            document.getElementById('modal-title').textContent = sec.postTitle;
+            document.getElementById('modal-art-caption').innerHTML = `<span>${sec.imageCaption}</span><span>[LIVE_SHADER_PREVIEW]</span>`;
+            document.getElementById('modal-lead-excerpt').textContent = sec.firstThreeSentences;
+
+            const bodyContainer = document.getElementById('modal-full-body');
+            bodyContainer.innerHTML = sec.fullParagraphs.map(p => `<p>${p}</p>`).join('');
+
+            const modal = document.getElementById('blog-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeBlogModal() {
+            const modal = document.getElementById('blog-modal');
+            if (modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            playBlipSound(480, 0.07);
+        }
+
+        function navigateModalPost(dir) {
+            const nextIdx = (activeModalSectionIdx + dir + SECTIONS.length) % SECTIONS.length;
+            jumpToSection(nextIdx);
+            openBlogModal(nextIdx);
+        }
+
+        function copyPostPermalink() {
+            const sec = SECTIONS[activeModalSectionIdx];
+            const tempInput = document.createElement('textarea');
+            tempInput.value = `0xC0DE://VORTEX_ZINE/${sec.id} - "${sec.postTitle}" (${sec.date})`;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            const btn = document.getElementById('modal-copy-btn');
+            btn.textContent = '[URI_COPIED_TO_VRAM!]';
+            playBlipSound(1320, 0.08);
+            setTimeout(() => { btn.textContent = 'COPY_PACKET_URI()'; }, 1800);
+        }
+
+        // Renders procedural Demoscene CRT Dithered & ASCII Art visuals into Square 2 (and Modal Banner)
+        function drawProceduralBlogImage(ctx, w, h, mode, time, asciiMode, pal) {
+            ctx.fillStyle = '#040604';
+            ctx.fillRect(0, 0, w, h);
+
+            // Subtle CRT background grid
+            ctx.strokeStyle = pal.primary + '22';
+            ctx.lineWidth = 1;
+            const gridStep = 18;
+            for (let x = 0; x < w; x += gridStep) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let y = 0; y < h; y += gridStep) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+
+            const cx = w * 0.5;
+            const cy = h * 0.5;
+
+            if (asciiMode) {
+                // High-density CP437 / ASCII Matrix Real-Time Sampling
+                const chars = " .:-=+*#%@░▒▓█";
+                ctx.font = '10px "Fira Code", monospace';
+                ctx.textBaseline = 'top';
+                const cols = Math.floor(w / 7);
+                const rows = Math.floor(h / 11);
+
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        const nx = (c / cols) * 2 - 1;
+                        const ny = (r / rows) * 2 - 1;
+                        const dist = Math.hypot(nx, ny);
+                        const angle = Math.atan2(ny, nx);
+                        let val = 0;
+
+                        if (mode === 'sdf_torus') {
+                            val = Math.sin(dist * 10 - time * 3.5 + Math.cos(angle * 3)) * 0.5 + 0.5;
+                        } else if (mode === 'osc_wobble') {
+                            const wave = Math.sin(nx * 6 + time * 5) * Math.cos(time * 2.5) * 0.45;
+                            val = 1.0 - Math.min(1, Math.abs(ny - wave) * 2.5);
+                        } else if (mode === 'crt_beam') {
+                            val = (Math.sin(ny * 14 + time * 4) * 0.5 + 0.5) * (1.0 - dist * 0.55);
+                        } else if (mode === 'ansi_bbs') {
+                            val = ((c ^ r) % 7 === 0) ? 0.9 : (Math.sin(nx * 4 + ny * 4 + time * 2) * 0.5 + 0.5);
+                        } else {
+                            val = Math.sin(angle * 4 + dist * 12 - time * 5) * 0.5 + 0.5;
                         }
-                        return row;
+
+                        const idx = Math.max(0, Math.min(chars.length - 1, Math.floor(val * chars.length)));
+                        if (idx > 2) {
+                            ctx.fillStyle = idx > 10 ? pal.secondary : (idx > 7 ? pal.primary : pal.primary + '88');
+                            ctx.fillText(chars[idx], c * 7, r * 11);
+                        }
                     }
-                    return l;
-                }).join('\n');
-                statusEl.textContent = '[VRAM_ATLAS_RESEEDED]';
-            } else if (type === 'hexmutate') {
-                const hexChars = "0123456789ABCDEF";
-                const randByte = () => hexChars[Math.floor(Math.random()*16)] + hexChars[Math.floor(Math.random()*16)];
-                const addrs = ["0x7FFF0010", "0x7FFF0018", "0x7FFF0020", "0x7FFF0028"];
-                preEl.textContent = addrs.map(a => {
-                    const bytes = Array.from({length: 8}, randByte).join(' ');
-                    return `${a}: ${bytes}  .VORTEX.`;
-                }).join('\n');
-                statusEl.textContent = '[RING-0_PAYLOAD_WRITTEN]';
-            } else if (type === 'tone2600') {
-                playBlipSound(2600, 0.35);
-                statusEl.textContent = '[2600Hz_TRUNK_SEIZED // AT&T_OK]';
-            } else if (type === 'keygen') {
-                const seg = () => Math.floor(0x1000 + Math.random() * 0xEFFF).toString(16).toUpperCase();
-                const serial = `0x${seg()}-C0DE-${seg()}-${seg()}-64KB`;
-                preEl.textContent = [
-                    "┌─────────────────────────────────────┐",
-                    "│ USER: SCENE_OPERATIVE_99            │",
-                    `│ KEY : ${serial}    │`,
-                    "│ SIG : [VERIFIED_BY_SINGULARITY]     │",
-                    "└─────────────────────────────────────┘"
-                ].join('\n');
-                statusEl.textContent = '[KEYGEN_HASH_COMPUTED]';
-            } else if (type === 'audio') {
-                toggleChiptune();
-                statusEl.textContent = state.audioActive ? '[YM2149_SYNTH: RUNNING]' : '[YM2149_SYNTH: MUTED]';
-            } else if (type === 'transmit') {
-                statusEl.textContent = '[PACKET_INGESTED_BY_WORMHOLE]';
-                triggerHyperWarp();
-            } else if (type === 'copy') {
-                const tempInput = document.createElement('textarea');
-                tempInput.value = 'ATDT +1-555-0xC0DE-64K // INVITE_KEY: VORTEX-2026-64K';
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                statusEl.textContent = '[INVITE_KEY_COPIED_TO_CLIPBOARD]';
+                }
+                return;
+            }
+
+            // Vector + CRT Dither Shader Modes per Blog Post
+            if (mode === 'sdf_torus') {
+                // POST 01: Raymarched Rotating 3D Wireframe Torus Knot
+                ctx.strokeStyle = pal.primary;
+                ctx.lineWidth = 1.3;
+                const rings = 28;
+                for (let i = 0; i < rings; i++) {
+                    const a = (i / rings) * Math.PI * 2 + time * 0.7;
+                    const rOuter = Math.min(w, h) * 0.28 + Math.cos(a * 3 + time * 2) * 14;
+                    const px = cx + Math.cos(a) * rOuter * 1.25;
+                    const py = cy + Math.sin(a) * rOuter * 0.75;
+                    const rad = 12 + Math.sin(a * 3 + time * 2) * 7;
+
+                    ctx.strokeStyle = (i % 3 === 0) ? pal.secondary : pal.primary;
+                    ctx.beginPath();
+                    ctx.arc(px, py, Math.max(3, rad), 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            } else if (mode === 'osc_wobble') {
+                // POST 02: 140 BPM Dubstep LFO Formant Wobble Spectrum & Dual Waveform
+                const bars = 28;
+                const barW = (w - 24) / bars;
+                for (let i = 0; i < bars; i++) {
+                    const norm = i / bars;
+                    const lfo = Math.abs(Math.sin(time * 4.66 + norm * 4.5)) * Math.cos(norm * Math.PI * 0.8);
+                    const bh = Math.max(6, lfo * (h * 0.65));
+                    ctx.fillStyle = (i % 2 === 0) ? pal.primary : pal.secondary;
+                    ctx.fillRect(12 + i * barW, cy + h * 0.28 - bh, barW - 3, bh);
+                }
+                // High-resonance formant wave trace
+                ctx.strokeStyle = pal.accent;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let x = 0; x < w; x += 3) {
+                    const nx = (x / w) * Math.PI * 6;
+                    const y = cy - 12 + Math.sin(nx + time * 8) * Math.sin(time * 4.66) * 24;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            } else if (mode === 'crt_beam') {
+                // POST 03: CRT Shadow-Mask RGB/Phosphor Electron Beam & Bloom Loupe
+                const scanY = ((time * 55) % h);
+                const grad = ctx.createLinearGradient(0, scanY - 22, 0, scanY + 6);
+                grad.addColorStop(0, 'transparent');
+                grad.addColorStop(0.8, pal.primary + '66');
+                grad.addColorStop(1, pal.secondary);
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, scanY - 22, w, 28);
+
+                // Magnified Phosphor Triads in center
+                for (let r = -2; r <= 2; r++) {
+                    for (let c = -5; c <= 5; c++) {
+                        const px = cx + c * 22 + ((r % 2) * 11);
+                        const py = cy + r * 18;
+                        const pulse = 0.5 + 0.5 * Math.sin(time * 4 - c * 0.5 - r * 0.4);
+                        ctx.fillStyle = pulse > 0.65 ? pal.secondary : pal.primary;
+                        ctx.fillRect(px - 4, py - 6, 3, 12);
+                        ctx.fillStyle = pal.accent;
+                        ctx.fillRect(px + 1, py - 6, 3, 12);
+                    }
+                }
+            } else if (mode === 'ansi_bbs') {
+                // POST 04: Isometric CP437 ANSI BBS Citadel Blocks
+                const glyphs = ["░", "▒", "▓", "█", "▀", "▄"];
+                ctx.font = 'bold 14px "Fira Code", monospace';
+                for (let i = 0; i < 16; i++) {
+                    const angle = (i / 16) * Math.PI * 2 + time * 0.5;
+                    const rad = 18 + (i % 3) * 18;
+                    const x = cx + Math.cos(angle) * rad * 1.6 - 7;
+                    const y = cy + Math.sin(angle) * rad * 0.85 + 5;
+                    ctx.fillStyle = (i % 2 === 0) ? pal.primary : pal.secondary;
+                    ctx.fillText(glyphs[(i + Math.floor(time * 4)) % glyphs.length], x, y);
+                }
+                ctx.strokeStyle = pal.accent;
+                ctx.strokeRect(cx - 55, cy - 26, 110, 52);
+                ctx.fillStyle = pal.accent;
+                ctx.font = 'bold 11px "Fira Code", monospace';
+                ctx.fillText("CONNECT 115200", cx - 46, cy + 4);
+            } else {
+                // POST 05: Compo Deadline Vortex Singularity Attractor
+                for (let arm = 0; arm < 4; arm++) {
+                    ctx.beginPath();
+                    for (let r = 2; r < Math.min(w, h) * 0.46; r += 2.5) {
+                        const theta = (arm * Math.PI * 0.5) + r * 0.11 - time * 3.2;
+                        const x = cx + Math.cos(theta) * r * 1.35;
+                        const y = cy + Math.sin(theta) * r * 0.8;
+                        if (r === 2) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.strokeStyle = (arm % 2 === 0) ? pal.primary : pal.secondary;
+                    ctx.lineWidth = 1.6;
+                    ctx.stroke();
+                }
             }
         }
 
-        function triggerMiniGlitch(el) {
-            el.classList.add('glitch-active');
-            setTimeout(() => el.classList.remove('glitch-active'), 280);
+        function renderAllBlogArtCanvases(time) {
+            const pal = PALETTES[state.palette];
+            const activeSec = Math.round(state.scrollProgress);
+
+            blogArtCanvases.forEach((entry) => {
+                // Only redraw canvases near the current scroll depth
+                if (Math.abs(entry.sectionIndex - activeSec) > 1) return;
+                const { canvas, ctx, mode, asciiMode } = entry;
+                if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+                    canvas.width = canvas.clientWidth || 320;
+                    canvas.height = canvas.clientHeight || 144;
+                }
+                drawProceduralBlogImage(ctx, canvas.width, canvas.height, mode, time, asciiMode, pal);
+            });
+
+            // Also animate the Modal Canvas if open
+            const modal = document.getElementById('blog-modal');
+            if (modal && !modal.classList.contains('hidden')) {
+                const mCanvas = document.getElementById('modal-art-canvas');
+                if (mCanvas) {
+                    if (mCanvas.width !== mCanvas.clientWidth || mCanvas.height !== mCanvas.clientHeight) {
+                        mCanvas.width = mCanvas.clientWidth || 640;
+                        mCanvas.height = mCanvas.clientHeight || 200;
+                    }
+                    const sec = SECTIONS[activeModalSectionIdx];
+                    drawProceduralBlogImage(mCanvas.getContext('2d'), mCanvas.width, mCanvas.height, sec.artMode, time, false, pal);
+                }
+            }
         }
 
         /***********************************************************************
@@ -1350,43 +1611,176 @@
         }
 
         /***********************************************************************
-         * 8. PROCEDURAL WEB AUDIO API CHIPTUNE & VORTEX DRONE SYNTHESIZER
-         * Zero external MP3s—pure oscillator arpeggio tracker + vortex sub-bass
+         * 8. PROCEDURAL WEB AUDIO API: 140 BPM DUBSTEP + 80s ELECTRONIC + CHIPTUNE
+         * Zero external audio assets — pure realtime synthesis featuring:
+         *  - 140 BPM Half-Time Dubstep Drum Engine + 80s Gated Reverb Snare + Simmons Hex Toms
+         *  - Tempo-Synced LFO Wobble Bass & Formant Growl + 80s Analog Reese Sub-Bass
+         *  - 80s Lush Detuned Juno/Outrun Polysynth Chords (Cm9 -> AbMaj7 -> Fm9 -> G7b9)
+         *  - Soaring 80s Portamento Lead with Stereo Ping-Pong Delay + YM2149 Chip Arpeggiator
          ***********************************************************************/
         let audioCtx = null;
+        let masterBus = null;
+        let delayBus = null;
+        let noiseBuffer = null;
+        let distCurve = null;
         let droneOsc = null;
         let droneGain = null;
         let chiptuneInterval = null;
         let arpStep = 0;
 
-        // C Minor Demoscene Tracker Pattern (MIDI frequencies)
-        const TRACKER_NOTES = [
-            130.81, 155.56, 196.00, 233.08, // C3, Eb3, G3, Bb3
-            261.63, 311.13, 392.00, 466.16, // C4, Eb4, G4, Bb4
-            523.25, 392.00, 311.13, 261.63,
-            174.61, 207.65, 261.63, 349.23  // F3, Ab3, C4, F4
+        // 140 BPM Timing Constants (16th note = 107.14ms, Beat = 428.57ms)
+        const BPM = 140;
+        const BEAT_SEC = 60 / BPM;
+        const STEP_SEC = BEAT_SEC / 4; // 0.10714s per 16th step
+        const STEP_MS = Math.round(STEP_SEC * 1000); // ~107ms
+
+        // 4-Bar Harmony (16 steps per bar = 64 steps total): Cm9 -> AbMaj7 -> Fm9 -> G7b9
+        const CHORD_PAD_VOICINGS = [
+            [130.81, 155.56, 196.00, 233.08, 293.66], // Bar 0: Cm9 (C3, Eb3, G3, Bb3, D4)
+            [103.83, 130.81, 155.56, 196.00, 233.08], // Bar 1: AbMaj9 (Ab2, C3, Eb3, G3, Bb3)
+            [87.31,  130.81, 174.61, 207.65, 261.63], // Bar 2: Fm9 (F2, C3, F3, Ab3, C4)
+            [98.00,  123.47, 174.61, 207.65, 246.94]  // Bar 3: G7b9 (G2, B2, F3, Ab3, B3)
         ];
+
+        // High-Speed YM2149 8-Bit Chiptune Arpeggio Pools per Bar
+        const CHORD_ARPEGGIOS = [
+            [261.63, 311.13, 392.00, 466.16, 587.33, 783.99], // Cm9
+            [207.65, 261.63, 311.13, 392.00, 466.16, 622.25], // AbMaj7
+            [174.61, 207.65, 261.63, 349.23, 392.00, 523.25], // Fm9
+            [196.00, 246.94, 293.66, 349.23, 415.30, 587.33]  // G7b9
+        ];
+
+        // 80s Outrun / Synthwave Soaring Lead Melody (64-step sequence, 0 = rest/hold)
+        const LEAD_80S_MELODY = [
+            // Bar 0 (Cm)
+            523.25, 0, 0, 622.25, 587.33, 0, 523.25, 0,  392.00, 0, 466.16, 0, 523.25, 0, 0, 0,
+            // Bar 1 (Ab)
+            622.25, 0, 0, 783.99, 698.46, 0, 622.25, 0,  523.25, 0, 466.16, 523.25, 392.00, 0, 0, 0,
+            // Bar 2 (Fm)
+            698.46, 0, 0, 830.61, 783.99, 0, 698.46, 0,  622.25, 0, 523.25, 0, 587.33, 0, 0, 0,
+            // Bar 3 (G7 turnaround climb)
+            587.33, 0, 622.25, 0, 698.46, 0, 783.99, 0,  830.61, 0, 783.99, 698.46, 587.33, 783.99, 987.77, 0
+        ];
+
+        // 64-Step Dubstep Wobble & 80s Reese Bass Sequence
+        // type: 'wobble' | 'growl' | 'reese' | 'drop'
+        // rateHz: LFO wobble frequency synced to 140 BPM (1/4=2.33Hz, 1/8=4.66Hz, 1/8T=7.0Hz, 1/16=9.33Hz, 1/32=14.0Hz)
+        const DUBSTEP_BASS_EVENTS = {
+            // BAR 0: Cm — Heavy Half-Time Wobble & Triplet Growls
+            0:  { freq: 65.41, steps: 4, type: 'wobble', rateHz: 4.66, vowel: 850 },   // C2 1/8 wobble
+            4:  { freq: 65.41, steps: 4, type: 'growl',  rateHz: 7.00, vowel: 1450 },  // C2 1/8T YOI growl
+            8:  { freq: 65.41, steps: 3, type: 'reese',  rateHz: 2.33, vowel: 620 },   // 80s Reese sub swell under gated snare
+            11: { freq: 77.78, steps: 3, type: 'wobble', rateHz: 9.33, vowel: 1650 },  // Eb2 1/16 rapid wobble
+            14: { freq: 98.00, steps: 2, type: 'drop',   rateHz: 14.0, vowel: 2100 },  // G2 machine-gun laser drop
+
+            // BAR 1: Ab — Lush 80s Reese into Syncopated Dubstep Bass Stabs
+            16: { freq: 51.91, steps: 6, type: 'reese',  rateHz: 3.50, vowel: 720 },   // Ab1 deep 80s Reese
+            22: { freq: 51.91, steps: 2, type: 'growl',  rateHz: 9.33, vowel: 1800 },  // Ab1 growl
+            24: { freq: 103.83,steps: 4, type: 'wobble', rateHz: 7.00, vowel: 1350 },  // Ab2 octave triplet wobble
+            28: { freq: 77.78, steps: 2, type: 'wobble', rateHz: 9.33, vowel: 1500 },  // Eb2
+            30: { freq: 65.41, steps: 2, type: 'growl',  rateHz: 14.0, vowel: 2200 },  // C2 stutter
+
+            // BAR 2: Fm — Aggressive Formant Talking Wobble
+            32: { freq: 43.65, steps: 4, type: 'wobble', rateHz: 4.66, vowel: 980 },   // F1 sub wobble
+            36: { freq: 87.31, steps: 4, type: 'growl',  rateHz: 7.00, vowel: 1900 },  // F2 high talking growl
+            40: { freq: 43.65, steps: 4, type: 'reese',  rateHz: 2.33, vowel: 650 },   // F1 Reese sustain
+            44: { freq: 51.91, steps: 2, type: 'wobble', rateHz: 9.33, vowel: 1400 },  // Ab1
+            46: { freq: 65.41, steps: 2, type: 'drop',   rateHz: 11.6, vowel: 1750 },  // C2 dive
+
+            // BAR 3: G7 — Turnaround Build & Bass Bomb
+            48: { freq: 49.00, steps: 4, type: 'wobble', rateHz: 7.00, vowel: 1100 },  // G1 triplet wobble
+            52: { freq: 98.00, steps: 4, type: 'growl',  rateHz: 9.33, vowel: 1950 },  // G2 scream wobble
+            56: { freq: 49.00, steps: 4, type: 'wobble', rateHz: 14.0, vowel: 2100 },  // G1 1/32 buzz wobble
+            60: { freq: 123.47,steps: 4, type: 'drop',   rateHz: 7.00, vowel: 2400 }   // B2 -> G1 pitch-drop bass bomb
+        };
+
+        // 16-Step Half-Time Dubstep Drum Pattern (Kick on 0, Heavy 80s Gated Snare on 8, ghost syncopation)
+        const DRUM_MAIN_16 = [
+            'K',  '.',  'h',  'k',   'h',  '.',  'o',  'k',
+            'S',  '.',  'h',  '.',   'k',  's',  'o',  'h'
+        ];
+        // Bar 1 & Bar 3 Variation with 80s Simmons Hexagonal Electronic Tom Fills & Double-Snare
+        const DRUM_FILL_16 = [
+            'K',  '.',  'h',  'k',   'S',  '.',  'o',  'k',
+            'S',  'h',  'T1', 'T1',  'T2', 'T2', 'T3', 'T3'
+        ];
+
+        function makeSaturationCurve(amount = 36) {
+            const n = 512;
+            const curve = new Float32Array(n);
+            for (let i = 0; i < n; i++) {
+                const x = (i * 2) / n - 1;
+                curve[i] = ((3 + amount) * x * 20 * (Math.PI / 180)) / (Math.PI + amount * Math.abs(x));
+            }
+            return curve;
+        }
 
         function initAudioEngine() {
             if (audioCtx) return;
             const AudioContextClass = window.AudioContext || window.webkitAudioContext;
             audioCtx = new AudioContextClass();
 
+            // Master compressor/limiter to glue the dubstep sub, gated drums, and 80s synths
+            const compressor = audioCtx.createDynamicsCompressor();
+            compressor.threshold.setValueAtTime(-14, audioCtx.currentTime);
+            compressor.knee.setValueAtTime(12, audioCtx.currentTime);
+            compressor.ratio.setValueAtTime(6, audioCtx.currentTime);
+            compressor.attack.setValueAtTime(0.003, audioCtx.currentTime);
+            compressor.release.setValueAtTime(0.15, audioCtx.currentTime);
+            compressor.connect(audioCtx.destination);
+
+            masterBus = audioCtx.createGain();
+            masterBus.gain.setValueAtTime(0.88, audioCtx.currentTime);
+            masterBus.connect(compressor);
+
+            // 80s Dotted-16th Stereo Echo Delay Bus for Synthwave Leads & Chiptune Arps
+            const delayNode = audioCtx.createDelay(1.0);
+            delayNode.delayTime.setValueAtTime(STEP_SEC * 3, audioCtx.currentTime); // Dotted 8th delay
+            const delayFeedback = audioCtx.createGain();
+            delayFeedback.gain.setValueAtTime(0.36, audioCtx.currentTime);
+            const delayFilter = audioCtx.createBiquadFilter();
+            delayFilter.type = 'bandpass';
+            delayFilter.frequency.setValueAtTime(1600, audioCtx.currentTime);
+            delayFilter.Q.setValueAtTime(0.9, audioCtx.currentTime);
+
+            delayBus = audioCtx.createGain();
+            delayBus.gain.setValueAtTime(0.32, audioCtx.currentTime);
+            delayBus.connect(delayNode);
+            delayNode.connect(delayFilter);
+            delayFilter.connect(delayFeedback);
+            delayFeedback.connect(delayNode);
+            delayFilter.connect(masterBus);
+
+            // Precompute 1.5s White/Pink Hybrid Noise Buffer for 80s Gated Snare & Crashes
+            const sampleRate = audioCtx.sampleRate;
+            const length = Math.floor(sampleRate * 1.5);
+            noiseBuffer = audioCtx.createBuffer(1, length, sampleRate);
+            const data = noiseBuffer.getChannelData(0);
+            let b0 = 0, b1 = 0, b2 = 0;
+            for (let i = 0; i < length; i++) {
+                const white = Math.random() * 2 - 1;
+                b0 = 0.997 * b0 + white * 0.029;
+                b1 = 0.985 * b1 + white * 0.032;
+                b2 = 0.950 * b2 + white * 0.048;
+                data[i] = (white * 0.65 + (b0 + b1 + b2) * 0.35);
+            }
+
+            distCurve = makeSaturationCurve(42);
+
             // Continuous Vortex Sub-Drone modulated by scroll velocity
             droneOsc = audioCtx.createOscillator();
             droneGain = audioCtx.createGain();
             droneOsc.type = 'sawtooth';
-            droneOsc.frequency.setValueAtTime(55, audioCtx.currentTime);
+            droneOsc.frequency.setValueAtTime(43.65, audioCtx.currentTime);
 
-            // Lowpass filter for dark cyberpunk rumble
             const filter = audioCtx.createBiquadFilter();
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(160, audioCtx.currentTime);
+            filter.frequency.setValueAtTime(140, audioCtx.currentTime);
 
-            droneGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            droneGain.gain.setValueAtTime(0.03, audioCtx.currentTime);
             droneOsc.connect(filter);
             filter.connect(droneGain);
-            droneGain.connect(audioCtx.destination);
+            droneGain.connect(masterBus);
             droneOsc.start();
         }
 
@@ -1403,17 +1797,15 @@
             if (state.audioActive) {
                 iconEl.textContent = '[♪ CHIPTUNE: ON]';
                 btnEl.classList.add('active');
-                droneGain.gain.setTargetAtTime(0.06, audioCtx.currentTime, 0.1);
+                droneGain.gain.setTargetAtTime(0.045, audioCtx.currentTime, 0.1);
+                arpStep = 0;
 
-                // 140 BPM 16th-note YM2149 Square-Wave Arpeggiator
+                if (chiptuneInterval) clearInterval(chiptuneInterval);
                 chiptuneInterval = setInterval(() => {
                     if (!state.audioActive) return;
-                    const freq = TRACKER_NOTES[arpStep % TRACKER_NOTES.length];
-                    const transpose = Math.round(state.scrollProgress) * 2;
-                    const finalFreq = freq * Math.pow(2, transpose / 12);
-                    playTrackerNote(finalFreq, 0.095);
+                    runDubstep80sTrackerStep(arpStep);
                     arpStep++;
-                }, 115);
+                }, STEP_MS);
             } else {
                 iconEl.textContent = '[♪ CHIPTUNE: OFF]';
                 btnEl.classList.remove('active');
@@ -1422,24 +1814,406 @@
             }
         }
 
-        function playTrackerNote(freq, duration) {
+        function runDubstep80sTrackerStep(step) {
             if (!audioCtx || !state.audioActive) return;
+
+            const step64 = step % 64;
+            const step16 = step % 16;
+            const barIdx = Math.floor(step64 / 16); // 0..3
+
+            // Slight pitch transposition based on deepest active scroll section
+            const semitoneShift = (Math.round(state.scrollProgress) % 2 === 1) ? 0 : 0;
+            const transposeRatio = Math.pow(2, semitoneShift / 12);
+
+            // 1. HALF-TIME DUBSTEP + 80s SIMMONS DRUM KIT
+            const isFillBar = (barIdx === 1 && step16 >= 12) || (barIdx === 3 && step16 >= 10);
+            const drumCode = isFillBar ? DRUM_FILL_16[step16] : DRUM_MAIN_16[step16];
+            playDubstep80sDrums(drumCode, step64);
+
+            // 2. DUBSTEP LFO WOBBLE & 80s REESE BASS ENGINE
+            const bassEvt = DUBSTEP_BASS_EVENTS[step64];
+            if (bassEvt) {
+                playDubstepWobbleBass(
+                    bassEvt.freq * transposeRatio,
+                    bassEvt.steps * STEP_SEC,
+                    bassEvt.type,
+                    bassEvt.rateHz,
+                    bassEvt.vowel
+                );
+            }
+
+            // 3. 80s JUNO / OUTRUN CHORUS POLYSYNTH CHORD STABS & PADS
+            if (step16 === 0 || step16 === 6 || step16 === 12) {
+                const chordNotes = CHORD_PAD_VOICINGS[barIdx];
+                const padDur = (step16 === 0) ? STEP_SEC * 5.5 : STEP_SEC * 3.5;
+                play80sJunoPolysynthChord(chordNotes, padDur, step16 === 0);
+            }
+
+            // 4. SOARING 80s SYNTHWAVE PORTAMENTO LEAD
+            const leadFreq = LEAD_80S_MELODY[step64];
+            if (leadFreq > 0) {
+                play80sOutrunLead(leadFreq * transposeRatio, STEP_SEC * 2.4);
+            }
+
+            // 5. YM2149 / SID DEMOSCENE 8-BIT RAPID ARPEGGIATOR
+            const arpPool = CHORD_ARPEGGIOS[barIdx];
+            const arpFreq = arpPool[step % arpPool.length] * transposeRatio;
+            playYM2149ChipArp(arpFreq, STEP_SEC * 0.85, step16);
+        }
+
+        // =====================================================================
+        // VOICE 1: HALF-TIME DUBSTEP DRUMS + 80S GATED SNARE + SIMMONS HEX TOMS
+        // =====================================================================
+        function playDubstep80sDrums(code, step64) {
+            const now = audioCtx.currentTime;
+
+            // Crash Cymbal Swell at start of 4-bar phrase
+            if (step64 === 0 && noiseBuffer) {
+                const crash = audioCtx.createBufferSource();
+                crash.buffer = noiseBuffer;
+                const hp = audioCtx.createBiquadFilter();
+                hp.type = 'highpass';
+                hp.frequency.setValueAtTime(5200, now);
+                const cGain = audioCtx.createGain();
+                cGain.gain.setValueAtTime(0.08, now);
+                cGain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+                crash.connect(hp);
+                hp.connect(cGain);
+                cGain.connect(masterBus);
+                crash.start(now);
+                crash.stop(now + 0.85);
+            }
+
+            if (code === 'K' || code === 'k') {
+                // Heavy Dubstep Sub-Kick + 80s Linn Punch Transient
+                const isMain = (code === 'K');
+                const kickOsc = audioCtx.createOscillator();
+                const clickOsc = audioCtx.createOscillator();
+                const kGain = audioCtx.createGain();
+                const clickGain = audioCtx.createGain();
+
+                kickOsc.type = 'sine';
+                kickOsc.frequency.setValueAtTime(isMain ? 175 : 135, now);
+                kickOsc.frequency.exponentialRampToValueAtTime(46, now + 0.065);
+                kickOsc.frequency.exponentialRampToValueAtTime(34, now + (isMain ? 0.28 : 0.16));
+
+                kGain.gain.setValueAtTime(isMain ? 0.42 : 0.22, now);
+                kGain.gain.exponentialRampToValueAtTime(0.001, now + (isMain ? 0.29 : 0.17));
+
+                // 80s Drum Machine beater click
+                clickOsc.type = 'square';
+                clickOsc.frequency.setValueAtTime(920, now);
+                clickOsc.frequency.exponentialRampToValueAtTime(110, now + 0.022);
+                clickGain.gain.setValueAtTime(isMain ? 0.11 : 0.05, now);
+                clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.024);
+
+                kickOsc.connect(kGain);
+                kGain.connect(masterBus);
+                clickOsc.connect(clickGain);
+                clickGain.connect(masterBus);
+
+                kickOsc.start(now);
+                kickOsc.stop(now + 0.3);
+                clickOsc.start(now);
+                clickOsc.stop(now + 0.026);
+            } else if (code === 'S' || code === 's') {
+                // Massive 80s Gated Reverb Snare + Dubstep 200Hz Body Punch (on Beat 3 / step 8)
+                const isMain = (code === 'S');
+                const bodyOsc = audioCtx.createOscillator();
+                const bodyGain = audioCtx.createGain();
+                bodyOsc.type = 'triangle';
+                bodyOsc.frequency.setValueAtTime(isMain ? 235 : 195, now);
+                bodyOsc.frequency.exponentialRampToValueAtTime(105, now + 0.11);
+
+                bodyGain.gain.setValueAtTime(isMain ? 0.30 : 0.12, now);
+                bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+                bodyOsc.connect(bodyGain);
+                bodyGain.connect(masterBus);
+                bodyOsc.start(now);
+                bodyOsc.stop(now + 0.14);
+
+                // 80s Gated Reverb Noise Burst (holds wide open then snaps shut abruptly)
+                if (noiseBuffer) {
+                    const snrNoise = audioCtx.createBufferSource();
+                    snrNoise.buffer = noiseBuffer;
+                    const bp = audioCtx.createBiquadFilter();
+                    bp.type = 'bandpass';
+                    bp.frequency.setValueAtTime(2400, now);
+                    bp.Q.setValueAtTime(0.75, now);
+
+                    const nGain = audioCtx.createGain();
+                    const dur = isMain ? 0.25 : 0.11;
+                    const peak = isMain ? 0.24 : 0.09;
+                    nGain.gain.setValueAtTime(peak, now);
+                    // Gated reverb plateau before steep gate cutoff
+                    nGain.gain.setValueAtTime(peak * 0.78, now + dur * 0.68);
+                    nGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+                    snrNoise.connect(bp);
+                    bp.connect(nGain);
+                    nGain.connect(masterBus);
+                    snrNoise.start(now);
+                    snrNoise.stop(now + dur);
+                }
+            } else if (code === 'h' || code === 'o') {
+                // Crisp 80s Metallic Hi-Hats + Dubstep Triplet Hat Roll on offbeats
+                const isOpen = (code === 'o');
+                const triggerHat = (offsetSec, durSec, amp) => {
+                    if (!noiseBuffer) return;
+                    const hat = audioCtx.createBufferSource();
+                    hat.buffer = noiseBuffer;
+                    const hp = audioCtx.createBiquadFilter();
+                    hp.type = 'highpass';
+                    hp.frequency.setValueAtTime(isOpen ? 6200 : 8200, now + offsetSec);
+                    const hGain = audioCtx.createGain();
+                    hGain.gain.setValueAtTime(amp, now + offsetSec);
+                    hGain.gain.exponentialRampToValueAtTime(0.001, now + offsetSec + durSec);
+                    hat.connect(hp);
+                    hp.connect(hGain);
+                    hGain.connect(masterBus);
+                    hat.start(now + offsetSec);
+                    hat.stop(now + offsetSec + durSec);
+                };
+
+                // Add dubstep double/triplet hi-hat ratchets on step 6 & 14
+                if (!isOpen && (step64 % 8 === 2)) {
+                    triggerHat(0, 0.03, 0.06);
+                    triggerHat(STEP_SEC * 0.5, 0.03, 0.045);
+                } else {
+                    triggerHat(0, isOpen ? 0.14 : 0.04, isOpen ? 0.085 : 0.055);
+                }
+            } else if (code === 'T1' || code === 'T2' || code === 'T3') {
+                // Iconic 80s Simmons SDS-V Hexagonal Electronic Tom Fill
+                const startPitch = (code === 'T1') ? 260 : (code === 'T2') ? 195 : 145;
+                const endPitch = startPitch * 0.42;
+                const tomOsc = audioCtx.createOscillator();
+                const tomGain = audioCtx.createGain();
+
+                tomOsc.type = 'triangle';
+                tomOsc.frequency.setValueAtTime(startPitch, now);
+                tomOsc.frequency.exponentialRampToValueAtTime(endPitch, now + 0.13);
+
+                tomGain.gain.setValueAtTime(0.24, now);
+                tomGain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+
+                tomOsc.connect(tomGain);
+                tomGain.connect(masterBus);
+                tomOsc.start(now);
+                tomOsc.stop(now + 0.15);
+            }
+        }
+
+        // =====================================================================
+        // VOICE 2: DUBSTEP LFO WOBBLE BASS & GROWL + 80S ANALOG REESE SUB
+        // =====================================================================
+        function playDubstepWobbleBass(freq, duration, type, lfoRateHz, vowelFreq) {
+            const now = audioCtx.currentTime;
+
+            // Scroll & Warp boost makes the dubstep wobble dirtier and wider when interacting
+            const scrollAggression = 1.0 + Math.min(1.5, Math.abs(state.scrollVelocity) * 28 + state.warpPulse * 0.9);
+
+            // 1. Pure Sub-Bass Foundation (Sine + Octave down anchor)
+            const subOsc = audioCtx.createOscillator();
+            const subGain = audioCtx.createGain();
+            subOsc.type = 'sine';
+            subOsc.frequency.setValueAtTime(freq, now);
+            if (type === 'drop') {
+                // Dubstep Bass Bomb / Laser Dive
+                subOsc.frequency.exponentialRampToValueAtTime(freq * 0.48, now + duration * 0.92);
+            }
+            subGain.gain.setValueAtTime(0.24, now);
+            subGain.gain.setValueAtTime(0.22, now + duration * 0.8);
+            subGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+            subOsc.connect(subGain);
+            subGain.connect(masterBus);
+
+            // 2. Dual Detuned Oscs (80s Reese Sawtooth + Growl Square/FM)
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            osc1.type = 'sawtooth';
+            osc2.type = (type === 'reese') ? 'sawtooth' : 'square';
+
+            // Classic 80s Reese chorusing detune spread
+            const detuneCents = (type === 'reese') ? 18 : 11;
+            osc1.frequency.setValueAtTime(freq, now);
+            osc2.frequency.setValueAtTime(freq * (type === 'growl' ? 1.5 : 1.0), now); // 5th harmonic on growls
+            osc1.detune.setValueAtTime(-detuneCents, now);
+            osc2.detune.setValueAtTime(+detuneCents, now);
+
+            if (type === 'drop') {
+                osc1.frequency.exponentialRampToValueAtTime(freq * 0.5, now + duration * 0.9);
+                osc2.frequency.exponentialRampToValueAtTime(freq * 0.5, now + duration * 0.9);
+            }
+
+            // 3. Resonant Wobble Lowpass Filter + Formant Vowel Peak Filter
+            const wobbleFilter = audioCtx.createBiquadFilter();
+            wobbleFilter.type = 'lowpass';
+            const baseCutoff = (type === 'reese') ? 320 : 480 * scrollAggression;
+            wobbleFilter.frequency.setValueAtTime(baseCutoff, now);
+            wobbleFilter.Q.setValueAtTime((type === 'growl') ? 9.5 : (type === 'wobble' ? 7.2 : 3.8), now);
+
+            const formantFilter = audioCtx.createBiquadFilter();
+            formantFilter.type = 'peaking';
+            formantFilter.frequency.setValueAtTime(vowelFreq || 1200, now);
+            formantFilter.Q.setValueAtTime(4.5, now);
+            formantFilter.gain.setValueAtTime((type === 'growl') ? 11 : 6, now);
+
+            // 4. Tempo-Synced Dubstep LFO Modulator driving Filter Cutoff & Formant
+            const lfo = audioCtx.createOscillator();
+            const lfoDepth = audioCtx.createGain();
+            const formantLfoDepth = audioCtx.createGain();
+
+            lfo.type = (type === 'growl') ? 'sawtooth' : 'sine';
+            lfo.frequency.setValueAtTime(lfoRateHz * scrollAggression, now);
+
+            const sweepWidth = (type === 'reese') ? 260 : (1150 * scrollAggression);
+            lfoDepth.gain.setValueAtTime(sweepWidth, now);
+            formantLfoDepth.gain.setValueAtTime(sweepWidth * 0.55, now);
+
+            lfo.connect(lfoDepth);
+            lfoDepth.connect(wobbleFilter.frequency);
+            lfo.connect(formantLfoDepth);
+            formantLfoDepth.connect(formantFilter.frequency);
+
+            // 5. Soft Waveshaper Distortion for Dubstep Growl Bite
+            const shaper = audioCtx.createWaveShaper();
+            shaper.curve = distCurve;
+            shaper.oversample = '2x';
+
+            const midGain = audioCtx.createGain();
+            const peakGain = (type === 'reese') ? 0.14 : 0.165;
+            midGain.gain.setValueAtTime(0.01, now);
+            midGain.gain.linearRampToValueAtTime(peakGain, now + 0.015);
+            midGain.gain.setValueAtTime(peakGain * 0.9, now + duration * 0.85);
+            midGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc1.connect(wobbleFilter);
+            osc2.connect(wobbleFilter);
+            wobbleFilter.connect(formantFilter);
+            formantFilter.connect(shaper);
+            shaper.connect(midGain);
+            midGain.connect(masterBus);
+
+            subOsc.start(now);
+            osc1.start(now);
+            osc2.start(now);
+            lfo.start(now);
+
+            const stopTime = now + duration + 0.02;
+            subOsc.stop(stopTime);
+            osc1.stop(stopTime);
+            osc2.stop(stopTime);
+            lfo.stop(stopTime);
+        }
+
+        // =====================================================================
+        // VOICE 3: 80S ANALOG JUNO / OUTRUN CHORUS POLYSYNTH CHORDS
+        // =====================================================================
+        function play80sJunoPolysynthChord(freqs, duration, isDownbeat) {
+            const now = audioCtx.currentTime;
+            const chordFilter = audioCtx.createBiquadFilter();
+            chordFilter.type = 'lowpass';
+            // Warm 80s analog brass/pad filter envelope sweep
+            chordFilter.frequency.setValueAtTime(320, now);
+            chordFilter.frequency.exponentialRampToValueAtTime(isDownbeat ? 2600 : 1900, now + duration * 0.35);
+            chordFilter.frequency.exponentialRampToValueAtTime(650, now + duration);
+            chordFilter.Q.setValueAtTime(1.8, now);
+
+            const chordGain = audioCtx.createGain();
+            chordGain.gain.setValueAtTime(0.001, now);
+            chordGain.gain.linearRampToValueAtTime(isDownbeat ? 0.042 : 0.032, now + 0.035);
+            chordGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            chordFilter.connect(chordGain);
+            chordGain.connect(masterBus);
+            chordGain.connect(delayBus);
+
+            freqs.forEach((f, idx) => {
+                const osc = audioCtx.createOscillator();
+                osc.type = (idx % 2 === 0) ? 'sawtooth' : 'square';
+                osc.frequency.setValueAtTime(f * 2, now); // 80s mid-register shimmer
+                // Rich analog chorus detune per voice
+                osc.detune.setValueAtTime((idx - 2) * 7.5, now);
+                osc.connect(chordFilter);
+                osc.start(now);
+                osc.stop(now + duration + 0.02);
+            });
+        }
+
+        // =====================================================================
+        // VOICE 4: SOARING 80S SYNTHWAVE LEAD WITH VIBRATO & STEREO ECHO
+        // =====================================================================
+        let lastLeadFreq = 523.25;
+        function play80sOutrunLead(freq, duration) {
+            const now = audioCtx.currentTime;
+
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            osc1.type = 'sawtooth';
+            osc2.type = 'square';
+
+            // 80s Analog Glide / Portamento from previous lead note
+            osc1.frequency.setValueAtTime(lastLeadFreq, now);
+            osc1.frequency.exponentialRampToValueAtTime(freq, now + 0.032);
+            osc2.frequency.setValueAtTime(lastLeadFreq, now);
+            osc2.frequency.exponentialRampToValueAtTime(freq, now + 0.032);
+            osc2.detune.setValueAtTime(10, now);
+            lastLeadFreq = freq;
+
+            // 6Hz 80s Mod-Wheel Vibrato LFO
+            const vibOsc = audioCtx.createOscillator();
+            const vibGain = audioCtx.createGain();
+            vibOsc.frequency.setValueAtTime(5.8, now);
+            vibGain.gain.setValueAtTime(4.5, now);
+            vibOsc.connect(vibGain);
+            vibGain.connect(osc1.frequency);
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(3400, now);
+            filter.Q.setValueAtTime(2.4, now);
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.005, now);
+            gain.gain.linearRampToValueAtTime(0.048, now + 0.018);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc1.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gain);
+            gain.connect(masterBus);
+            gain.connect(delayBus); // Feed into 80s dotted-8th echo
+
+            osc1.start(now);
+            osc2.start(now);
+            vibOsc.start(now);
+            osc1.stop(now + duration);
+            osc2.stop(now + duration);
+            vibOsc.stop(now + duration);
+        }
+
+        // =====================================================================
+        // VOICE 5: YM2149 / SID DEMOSCENE 8-BIT CHIPTUNE ARPEGGIATOR
+        // =====================================================================
+        function playYM2149ChipArp(freq, duration, step16) {
             const now = audioCtx.currentTime;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
 
-            osc.type = (arpStep % 4 === 0) ? 'square' : 'triangle';
+            osc.type = 'square';
             osc.frequency.setValueAtTime(freq, now);
-            // Rapid chiptune arpeggio pitch slide
-            if (arpStep % 2 === 0) {
-                osc.frequency.setValueAtTime(freq * 1.498, now + duration * 0.45);
-            }
+            // Rapid 50Hz PAL Demoscene 3-note chip chord arpeggiation inside a single 16th step
+            osc.frequency.setValueAtTime(freq * 1.1892, now + duration * 0.33); // Minor 3rd
+            osc.frequency.setValueAtTime(freq * 1.4983, now + duration * 0.66); // Perfect 5th
 
-            gain.gain.setValueAtTime(0.045, now);
+            const accent = (step16 % 4 === 0) ? 0.036 : 0.022;
+            gain.gain.setValueAtTime(accent, now);
             gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
             osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            gain.connect(masterBus);
+            if (step16 % 4 === 0) gain.connect(delayBus);
+
             osc.start(now);
             osc.stop(now + duration);
         }
@@ -1456,7 +2230,7 @@
             gain.gain.setValueAtTime(0.05, now);
             gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
             osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            gain.connect(masterBus || audioCtx.destination);
             osc.start(now);
             osc.stop(now + duration);
         }
@@ -1535,12 +2309,14 @@
             // Touch swipe for mobile/tablet
             let touchStartY = 0;
             window.addEventListener('touchstart', (e) => {
+                if (!document.getElementById('blog-modal').classList.contains('hidden')) return;
                 if (e.touches.length > 0) {
                     touchStartY = e.touches[0].clientY;
                 }
             }, { passive: true });
 
             window.addEventListener('touchmove', (e) => {
+                if (!document.getElementById('blog-modal').classList.contains('hidden')) return;
                 if (e.touches.length > 0) {
                     const dy = touchStartY - e.touches[0].clientY;
                     touchStartY = e.touches[0].clientY;
@@ -1548,8 +2324,16 @@
                 }
             }, { passive: true });
 
-            // Keyboard ArrowUp / ArrowDown / PageUp / PageDown
+            // Keyboard ArrowUp / ArrowDown / PageUp / PageDown + ESC for Modal
             window.addEventListener('keydown', (e) => {
+                const modalOpen = !document.getElementById('blog-modal').classList.contains('hidden');
+                if (e.key === 'Escape' && modalOpen) {
+                    e.preventDefault();
+                    closeBlogModal();
+                    return;
+                }
+                if (modalOpen) return;
+
                 if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
                     e.preventDefault();
                     stepScroll(1);
@@ -1558,6 +2342,21 @@
                     stepScroll(-1);
                 }
             });
+
+            // Close modal when clicking backdrop
+            document.getElementById('blog-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'blog-modal') {
+                    closeBlogModal();
+                }
+            });
+
+            // Wheel scrolling feeds the whirlpool continuously (paused when modal is open)
+            window.addEventListener('wheel', (e) => {
+                if (!document.getElementById('blog-modal').classList.contains('hidden')) return;
+                e.preventDefault();
+                const delta = e.deltaY * 0.0014;
+                state.targetScroll = Math.max(0, Math.min(SECTIONS.length - 1, state.targetScroll + delta));
+            }, { passive: false });
 
             // Mouse movement tilts the 3D Whirlpool Camera
             window.addEventListener('mousemove', (e) => {
@@ -1686,6 +2485,9 @@
 
             // Update 3D Terminal Cards Swirling Into / Out of the Whirlpool
             updateCardsVortexPhysics(elapsedTime);
+
+            // Render Procedural CRT Dither / ASCII Blog Images in Square 2 & Modal
+            renderAllBlogArtCanvases(elapsedTime);
 
             // Render Demoscene Copper Raster Bars & Sine Scroller
             renderDemosceneCanvases(elapsedTime);
