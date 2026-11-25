@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VORTEX_64K [DEMOSCENE ASCII ENGINE]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff41;
+            --secondary: #00f0ff;
+            --accent: #ffb000;
+            --bg-void: #040504;
+            --glow: rgba(0, 255, 65, 0.45);
+            --glow-strong: rgba(0, 255, 65, 0.85);
+            --panel-bg: rgba(4, 12, 6, 0.82);
+        }
+
+        [data-theme="amber"] {
+            --primary: #ffb000;
+            --secondary: #ff5500;
+            --accent: #00f0ff;
+            --glow: rgba(255, 176, 0, 0.45);
+            --glow-strong: rgba(255, 176, 0, 0.85);
+            --panel-bg: rgba(14, 9, 2, 0.84);
+        }
+
+        [data-theme="amiga"] {
+            --primary: #00f0ff;
+            --secondary: #ff007f;
+            --accent: #ffe600;
+            --glow: rgba(0, 240, 255, 0.45);
+            --glow-strong: rgba(0, 240, 255, 0.85);
+            --panel-bg: rgba(4, 8, 16, 0.84);
+        }
+
+        [data-theme="redalert"] {
+            --primary: #ff1e38;
+            --secondary: #ff9900;
+            --accent: #ffffff;
+            --glow: rgba(255, 30, 56, 0.45);
+            --glow-strong: rgba(255, 30, 56, 0.85);
+            --panel-bg: rgba(16, 3, 5, 0.84);
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-void);
+            color: var(--primary);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .font-vt {
+            font-family: 'VT323', monospace;
+        }
+
+        /* WebGL Canvas Layer */
+        #webgl-container {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: auto;
+        }
+
+        /* CRT & Demoscene Overlays */
+        .crt-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 40;
+            pointer-events: none;
+            background: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+                radial-gradient(circle at center, transparent 58%, rgba(0, 0, 0, 0.78) 100%);
+            background-size: 100% 3px, 100% 100%;
+        }
+
+        .crt-flicker {
+            position: fixed;
+            inset: 0;
+            z-index: 41;
+            pointer-events: none;
+            box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+            border: 2px solid rgba(255, 255, 255, 0.04);
+        }
+
+        /* Text Glow & Borders */
+        .text-glow {
+            text-shadow: 0 0 8px var(--glow), 0 0 2px var(--primary);
+        }
+
+        .box-glow {
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.85), inset 0 0 12px rgba(0, 255, 65, 0.08);
+            border: 1px solid var(--primary);
+            background: var(--panel-bg);
+            backdrop-filter: blur(4px);
+        }
+
+        /* 3D Perspective Stage for Swirling Terminal Cards */
+        #vortex-stage {
+            position: fixed;
+            inset: 0;
+            z-index: 15;
+            pointer-events: none;
+            perspective: 1100px;
+            overflow: hidden;
+        }
+
+        .vortex-card {
+            position: absolute;
+            width: 390px;
+            max-width: 88vw;
+            pointer-events: auto;
+            transform-style: preserve-3d;
+            will-change: transform, opacity, filter;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .vortex-card:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 0 25px var(--glow);
+        }
+
+        /* Glitch Effect Class */
+        .glitch-active {
+            animation: glitchShake 0.16s infinite;
+        }
+
+        @keyframes glitchShake {
+            0% { transform: translate(0, 0) skew(0deg); filter: hue-rotate(0deg); }
+            25% { transform: translate(-4px, 2px) skew(-2deg); filter: hue-rotate(90deg); }
+            50% { transform: translate(4px, -2px) skew(2deg); filter: invert(0.15); }
+            75% { transform: translate(-2px, -1px) skew(1deg); }
+            100% { transform: translate(0, 0) skew(0deg); }
+        }
+
+        /* Custom Sliders & Buttons */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            height: 5px;
+            border: 1px solid var(--primary);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 14px;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        .ascii-btn {
+            border: 1px solid var(--primary);
+            background: rgba(0, 0, 0, 0.65);
+            color: var(--primary);
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+        .ascii-btn:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 12px var(--glow-strong);
+        }
+        .ascii-btn.active {
+            background: var(--primary);
+            color: #000;
+            font-weight: 700;
+        }
+
+        /* Scrollbar hide */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body data-theme="matrix">
+
+    <!-- 3D WebGL Whirlpool & Instanced ASCII Glyph Vortex -->
+    <div id="webgl-container"></div>
+
+    <!-- CRT Scanline & Vignette Overlays -->
+    <div class="crt-overlay"></div>
+    <div class="crt-flicker"></div>
+
+    <!-- Top Demoscene HUD Header & Raster Telemetry -->
+    <header class="fixed top-0 left-0 right-0 z-30 p-2 sm:p-3 pointer-events-none flex flex-col gap-1.5">
+        <!-- Amiga Copper / Raster Bar Canvas -->
+        <canvas id="raster-canvas" class="w-full h-2.5 opacity-85 border border-current"></canvas>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 box-glow px-3 py-1.5 pointer-events-auto rounded">
+            <!-- Left Identity -->
+            <div class="flex items-center gap-3">
+                <div class="font-vt text-xl sm:text-2xl tracking-wider text-glow font-bold flex items-center gap-2">
+                    <span class="inline-block w-2.5 h-2.5 bg-current animate-ping"></span>
+                    <span>╔═[0xC0DE // VORTEX_64K]═╗</span>
+                </div>
+                <span class="hidden md:inline-block text-xs opacity-80 border-l border-current pl-3">
+                    KERNEL: RING-0_ASCII_VORTEX // BUILD 99.4
+                </span>
+            </div>
+
+            <!-- Center Section Jump Pills -->
+            <nav id="nav-Jumpers" class="flex items-center gap-1 sm:gap-1.5 text-xs overflow-x-auto">
+                <button onclick="jumpToSection(0)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-0">0x00:NFO</button>
+                <button onclick="jumpToSection(1)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-1">0x01:64K</button>
+                <button onclick="jumpToSection(2)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-2">0x02:RING0</button>
+                <button onclick="jumpToSection(3)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-3">0x03:KEYGEN</button>
+                <button onclick="jumpToSection(4)" class="ascii-btn px-2 py-0.5 rounded" id="nav-btn-4">0x04:EOF</button>
+            </nav>
+
+            <!-- Right Telemetry & Audio Toggle -->
+            <div class="flex items-center gap-3 text-xs">
+                <div class="hidden sm:flex items-center gap-2 font-mono">
+                    <span>FPS:<strong id="hud-fps" class="text-glow">60</strong></span>
+                    <span>|</span>
+                    <span>VORTEX_Z:<strong id="hud-depth">0.00</strong></span>
+                    <span>|</span>
+                    <span>RPM:<strong id="hud-rpm">142</strong></span>
+                </div>
+                <button id="audio-toggle-btn" onclick="toggleChiptune()" class="ascii-btn px-2.5 py-1 rounded font-bold flex items-center gap-1.5">
+                    <span id="audio-icon">[♪ CHIPTUNE: OFF]</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Left Timeline & Vortex Ingestion Status Rail -->
+    <aside class="fixed left-3 top-1/2 -translate-y-1/2 z-30 hidden lg:flex flex-col items-start gap-2 pointer-events-auto">
+        <div class="box-glow p-2.5 rounded text-xs w-52">
+            <div class="font-vt text-base border-b border-current pb-1 mb-2 flex justify-between">
+                <span>╔═ VORTEX_PIPE ═╗</span>
+                <span id="scroll-pct">00%</span>
+            </div>
+            <div id="timeline-steps" class="flex flex-col gap-1.5 font-mono text-[11px]">
+                <!-- Populated dynamically -->
+            </div>
+            <div class="mt-2.5 pt-2 border-t border-current/40 text-[10px] opacity-85 leading-tight">
+                <div>▲ SCROLL DOWN: INGEST TOP →</div>
+                <div>▼ SCROLL UP: EJECT CORE ←</div>
+                <div class="mt-1 text-[var(--accent)]" id="physics-state-label">STATE: HARMONIC_ORBIT</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Right Control Deck (HUD Tweakers) -->
+    <aside class="fixed right-3 top-1/2 -translate-y-1/2 z-30 hidden xl:flex flex-col gap-2 pointer-events-auto">
+        <div class="box-glow p-3 rounded text-xs w-56 flex flex-col gap-2.5">
+            <div class="font-vt text-base border-b border-current pb-1 flex justify-between items-center">
+                <span>╔═ VORTEX_CTRL ═╗</span>
+                <span>[SYS]</span>
+            </div>
+
+            <!-- Gravity / Suction Pull -->
+            <div>
+                <div class="flex justify-between text-[11px] mb-1">
+                    <span>SUCTION_GRAVITY</span>
+                    <span id="val-gravity">1.2x</span>
+                </div>
+                <input id="ctrl-gravity" type="range" min="0.4" max="2.8" step="0.1" value="1.2" class="w-full">
+            </div>
+
+            <!-- Twist Spiral Factor -->
+            <div>
+                <div class="flex justify-between text-[11px] mb-1">
+                    <span>SPIRAL_TORQUE</span>
+                    <span id="val-twist">1.5x</span>
+                </div>
+                <input id="ctrl-twist" type="range" min="0.5" max="3.5" step="0.1" value="1.5" class="w-full">
+            </div>
+
+            <!-- ASCII Glyph Visibility / Scale -->
+            <div>
+                <div class="flex justify-between text-[11px] mb-1">
+                    <span>GLYPH_DENSITY</span>
+                    <span id="val-density">100%</span>
+                </div>
+                <input id="ctrl-density" type="range" min="0.25" max="1.6" step="0.05" value="1.0" class="w-full">
+            </div>
+
+            <!-- Color Palette Selector -->
+            <div class="pt-1 border-t border-current/30">
+                <div class="text-[11px] mb-1.5">PALETTE_ROM:</div>
+                <div class="grid grid-cols-2 gap-1 text-[10px]">
+                    <button onclick="setPalette('matrix')" class="ascii-btn py-1 rounded active" id="pal-matrix">PHOSPHOR</button>
+                    <button onclick="setPalette('amber')" class="ascii-btn py-1 rounded" id="pal-amber">AMBER_CRT</button>
+                    <button onclick="setPalette('amiga')" class="ascii-btn py-1 rounded" id="pal-amiga">AMIGA_AGA</button>
+                    <button onclick="setPalette('redalert')" class="ascii-btn py-1 rounded" id="pal-redalert">RING0_RED</button>
+                </div>
+            </div>
+
+            <!-- Action Triggers -->
+            <div class="pt-1 border-t border-current/30 flex flex-col gap-1.5">
+                <button onclick="triggerHyperWarp()" class="ascii-btn py-1.5 px-2 rounded font-bold text-center text-[11px]">
+                    ⚡ TRIGGER_VORTEX_WARP()
+                </button>
+                <button onclick="ingestCurrentAndAdvance()" class="ascii-btn py-1 px-2 rounded text-center text-[11px]">
+                    ▼ FLUSH_INTO_SINGULARITY
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Center Reticle HUD indicator (Behind cards, marks the sinkhole core) -->
+    <div class="fixed inset-0 z-10 pointer-events-none flex items-center justify-center">
+        <div id="vortex-reticle" class="w-36 h-36 sm:w-48 sm:h-48 rounded-full border border-dashed border-current/30 flex items-center justify-center transition-transform duration-150">
+            <div class="text-[10px] font-mono opacity-40 text-center leading-none">
+                [SINGULARITY_CORE]<br>
+                <span id="core-coord">r=0.00 θ=0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic 3D Whirlpool Terminal Panels Stage -->
+    <main id="vortex-stage" aria-live="polite">
+        <!-- Cards are dynamically injected and positioned along spiral paths into/out of the 3D whirlpool -->
+    </main>
+
+    <!-- Bottom Demoscene Sine-Wave Scroller & Mobile Controls -->
+    <footer class="fixed bottom-0 left-0 right-0 z-30 p-2 sm:p-3 pointer-events-none flex flex-col gap-1.5">
+        <!-- Mobile quick controls bar -->
+        <div class="flex xl:hidden items-center justify-between gap-2 box-glow px-2.5 py-1 rounded pointer-events-auto text-xs">
+            <button onclick="stepScroll(-1)" class="ascii-btn px-2 py-0.5 rounded">▲ PREV_NODE</button>
+            <button onclick="triggerHyperWarp()" class="ascii-btn px-2.5 py-0.5 rounded font-bold">⚡ WARP_GLITCH</button>
+            <button onclick="CyclePaletteMobile()" class="ascii-btn px-2 py-0.5 rounded">🎨 PALETTE</button>
+            <button onclick="stepScroll(1)" class="ascii-btn px-2 py-0.5 rounded">▼ NEXT_NODE</button>
+        </div>
+
+        <!-- Sine-Wave Copper Demoscene Scroller Canvas + Status Bar -->
+        <div class="box-glow rounded px-2 py-1 pointer-events-auto flex items-center justify-between gap-3">
+            <div class="hidden sm:block text-[11px] font-bold whitespace-nowrap border-r border-current pr-2">
+                ╔═[SINE_SCROLLER]═╗
+            </div>
+            <canvas id="sine-scroller-canvas" class="w-full h-7"></canvas>
+            <div class="text-[10px] whitespace-nowrap border-l border-current pl-2 hidden md:block">
+                SCROLL / WHEEL / SWIPE TO FEED VORTEX
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /***********************************************************************
+         * 1. DEMOSCENE SECTIONS & HACKER TERMINAL DATA
+         * Each section contains 3 modular ASCII blocks positioned around the
+         * central whirlpool. When scrolling down:
+         * - Current section panels spiral inward, fragment into ASCII debris,
+         *   and drop down the Z-axis funnel of the whirlpool.
+         * - Next section panels emerge from the deep vortex center and lock
+         *   into orbit around the viewport.
+         ***********************************************************************/
+        const SECTIONS = [
+            {
+                id: "0x00",
+                code: "INIT_MANIFEST // GREETZ & .NFO",
+                badge: "RELEASE_NFO",
+                cards: [
+                    {
+                        slot: "TOP_LEFT",
+                        angleOffset: 2.35, // radians around vortex
+                        targetX: -275,
+                        targetY: -125,
+                        title: "╔══[ 0x00_A // SCENE_MANIFEST.NFO ]══╗",
+                        asciiArt: [
+                            " ██▒   █▓ ▒█████   ██▀███  ▄▄▄█████▓▓█████ ▒██   ██▒",
+                            "▓██░   █▒▒██▒  ██▒▓██ ▒ ██▒▓  ██▒ ▓▒▓█   ▀ ▒▒ █ █ ▒░",
+                            " ▓██  █▒░▒██░  ██▒▓██ ░▄█ ▒▒ ▓██░ ▒░▒███   ░░  █   ░",
+                            "  ▒██ █░░▒██   ██░▒██▀▀█▄  ░ ▓██▓ ░ ▒▓█  ▄  ░ █ █ ▒ ",
+                            "   ▒▀█░  ░ ████▓▒░░██▓ ▒██▒  ▒██▒ ░ ░▒████▒▒██▒ ▒██▒"
+                        ].join("\n"),
+                        body: "WELCOME TO THE 64K ASCII SINGULARITY. SCROLL DOWN TO WATCH TERMINAL BUFFERS SPIRAL INTO THE GRAVITY WELL While EMERGING PACKETS UNPACK FROM THE CORE.",
+                        actionLabel: "PING_SCENE_NODES()",
+                        actionType: "ping"
+                    },
+                    {
+                        slot: "TOP_RIGHT",
+                        angleOffset: 0.45,
+                        targetX: 275,
+                        targetY: -115,
+                        title: "╔══[ 0x00_B // CREW_GREETINGS.LST ]══╗",
+                        asciiArt: [
+                            "┌────────────────────────────────────┐",
+                            "│ GRP_ID      STATUS    SIGNAL_DB    │",
+                            "├────────────────────────────────────┤",
+                            "│ FARBRAUSCH  [LOCKED]  +99.4 dBm    │",
+                            "│ FUTURE_CREW [ACTIVE]  +96.1 dBm    │",
+                            "│ RAZOR_1911  [RING_0]  +94.8 dBm    │",
+                            "│ FAIRLIGHT   [SYNCED]  +92.0 dBm    │",
+                            "└────────────────────────────────────┘"
+                        ].join("\n"),
+                        body: "RESPECT TO ALL CODERS, GRAPHICIANS & MUSICIANS PUSHING REALTIME PROCEDURAL SHADERS IN 64 KILOBYTES.",
+                        actionLabel: "DECRYPT_NFO_SIGNATURE()",
+                        actionType: "decrypt"
+                    },
+                    {
+                        slot: "BOTTOM_LEFT",
+                        angleOffset: 3.85,
+                        targetX: -240,
+                        targetY: 155,
+                        title: "╔══[ 0x00_C // VORTEX_TELEMETRY ]══╗",
+                        asciiArt: [
+                            "   . · * .  ╭───────────╮  . * · .",
+                            "  *  ───►   │ SINGULAR  │   ◄───  *",
+                            "   ' · . *  ╰─────┬─────╯  * . · '",
+                            "                  ▼ INGESTION_PIPE"
+                        ].join("\n"),
+                        body: "USE MOUSE WHEEL OR TOUCH DRAG. NOTICE HOW THIS TERMINAL FRAME TWISTS ALONG LOGARITHMIC SPIRAL r(θ) = a·e^(bθ) INTO THE SINGULARITY.",
+                        actionLabel: "INGEST_THIS_LAYER_NOW ▼",
+                        actionType: "next"
+                    }
+                ]
+            },
+            {
+                id: "0x01",
+                code: "SHADER_VORTEX // 64K INTRO ENGINE",
+                badge: "GLSL_RAYMARCH",
+                cards: [
+                    {
+                        slot: "TOP_LEFT",
+                        angleOffset: 2.5,
+                        targetX: -280,
+                        targetY: -120,
+                        title: "╔══[ 0x01_A // LOGARITHMIC_FUNNEL.GLSL ]══╗",
+                        asciiArt: [
+                            "// VERTEX DISPLACEMENT KERNEL",
+                            "float r = length(pos.xy);",
+                            "float theta = atan(pos.y, pos.x);",
+                            "theta += uTime * (4.0 / (r + 0.35));",
+                            "float zDepth = -pow(1.8 / (r + 0.2), 1.6);"
+                        ].join("\n"),
+                        body: "THE CENTRAL WHIRLPOOL COMBINES 4,500 CUSTOM SHADER PARTICLES WITH 650 INSTANCED ASCII GLYPH QUADS ORBITING KEPLERIAN VELOCITY CURVES.",
+                        actionLabel: "OVERCLOCK_VORTEX_SPIN()",
+                        actionType: "warp"
+                    },
+                    {
+                        slot: "TOP_RIGHT",
+                        angleOffset: 0.55,
+                        targetX: 280,
+                        targetY: -110,
+                        title: "╔══[ 0x01_B // ASCII_ATLAS_SAMPLER ]══╗",
+                        asciiArt: [
+                            "CHARSET: [ 0 1 # $ @ % & * + = - ~ ^ ]",
+                            "┌───┬───┬───┬───┬───┬───┬───┬───┐",
+                            "│ @ │ # │ $ │ % │ & │ 0 │ 1 │ * │",
+                            "└───┴───┴───┴───┴───┴───┴───┴───┘",
+                            "MIPMAP_GEN: PROCEDURAL_CANVAS_2D"
+                        ].join("\n"),
+                        body: "ZERO EXTERNAL TEXTURES LOADED. EVERY ASCII SPRITE IN THE 3D SWIRL IS SAMPLED FROM A DYNAMICALLY RASTERIZED 16x4 FONT ATLAS IN VRAM.",
+                        actionLabel: "SCRAMBLE_GLYPH_BUFFER()",
+                        actionType: "scramble"
+                    },
+                    {
+                        slot: "BOTTOM_RIGHT",
+                        angleOffset: 5.4,
+                        targetX: 245,
+                        targetY: 155,
+                        title: "╔══[ 0x01_C // COPPER_RASTER_TIMING ]══╗",
+                        asciiArt: [
+                            "SCANLINE 012: ████████████▒▒▒▒░░ [60Hz]",
+                            "SCANLINE 128: ░░▒▒▒▒████████████ [LOCK]",
+                            "VBLANK_IRQ  : 0x00FF41 -> 0x00F0FF"
+                        ].join("\n"),
+                        body: "SYNCHRONIZED TO VBLANK INTERRUPT. SCROLL FURTHER TO WATCH THE 64K ENGINE COLLAPSE INTO THE EVENT HORIZON.",
+                        actionLabel: "DIVE_TO_RING0_MATRIX ▼",
+                        actionType: "next"
+                    }
+                ]
+            },
+            {
+                id: "0x02",
+                code: "PHREAK_MATRICES // RING-0 EXPLOITS",
+                badge: "KERNEL_DUMP",
+                cards: [
+                    {
+                        slot: "TOP_LEFT",
+                        angleOffset: 2.2,
+                        targetX: -275,
+                        targetY: -125,
+                        title: "╔══[ 0x02_A // HEX_MEMORY_SINKHOLE ]══╗",
+                        asciiArt: [
+                            "0x7FFF0010: 48 89 E5 48 83 EC 20 89  H..H.. .",
+                            "0x7FFF0018: 7D FC 48 89 75 F0 C7 45  }.H.u..E",
+                            "0x7FFF0020: FC 00 FF 41 00 90 90 90  ...A....",
+                            "0x7FFF0028: EB FE CC CC C0 DE 7F 00  ........"
+                        ].join("\n"),
+                        body: "LIVE STACK POINTER REDIRECTED TO THE VORTEX CORE. BYTES PULLED PAST EVENT HORIZON UNDERGO BITWISE XOR ROTATION.",
+                        actionLabel: "INJECT_NOP_SLED()",
+                        actionType: "hexmutate"
+                    },
+                    {
+                        slot: "BOTTOM_LEFT",
+                        angleOffset: 3.9,
+                        targetX: -265,
+                        targetY: 145,
+                        title: "╔══[ 0x02_B // BLUEBOX_2600HZ_PHREAK ]══╗",
+                        asciiArt: [
+                            "FREQS: [2600Hz] ──┬── [KP1: 1100+1700Hz]",
+                            "                  └── [ST : 1500+1700Hz]",
+                            "TRUNK_STATE: SEIZED // OPERATOR_BYPASS"
+                        ].join("\n"),
+                        body: "ACOUSTIC COUPLER LINKED TO WEB AUDIO SYNTH. CLICK BELOW TO EMIT A 2600HZ TRUNK SEIZURE CHIRP ACROSS THE VORTEX.",
+                        actionLabel: "EMIT_2600HZ_TONE()",
+                        actionType: "tone2600"
+                    },
+                    {
+                        slot: "TOP_RIGHT",
+                        angleOffset: 0.6,
+                        targetX: 275,
+                        targetY: -100,
+                        title: "╔══[ 0x02_C // ROOTKIT_INTERRUPT_IDT ]══╗",
+                        asciiArt: [
+                            "╔══════════════════════════════════╗",
+                            "║ INT 0x80 -> HOOKED [VORTEX_SYS]  ║",
+                            "║ CR0_WP   -> 0 (WRITE_UNLOCKED)   ║",
+                            "║ SMEP/SMAP-> BYPASSED VIA ROP     ║",
+                            "╚══════════════════════════════════╝"
+                        ].join("\n"),
+                        body: "PRIVILEGE ESCALATION COMPLETE. ALL DOM NODES AND GLSL BUFFERS ARE NOW RUNNING AT RING-0.",
+                        actionLabel: "PROCEED_TO_CRACKTRO ▼",
+                        actionType: "next"
+                    }
+                ]
+            },
+            {
+                id: "0x03",
+                code: "WAREZ_CRACKTRO // KEYGEN & CHIPTUNE",
+                badge: "KEYGEN_SYNTH",
+                cards: [
+                    {
+                        slot: "TOP_LEFT",
+                        angleOffset: 2.4,
+                        targetX: -275,
+                        targetY: -120,
+                        title: "╔══[ 0x03_A // ELLIPTIC_SERIAL_KEYGEN ]══╗",
+                        asciiArt: [
+                            "┌─────────────────────────────────────┐",
+                            "│ USER: SCENE_OPERATIVE_99            │",
+                            "│ HASH: 0x9F4A-C0DE-64KB-7F00-7731    │",
+                            "│ ALGO: Ed25519_VORTEX_CURVE          │",
+                            "└─────────────────────────────────────┘"
+                        ].join("\n"),
+                        body: "GENERATE DETERMINISTIC DEMOSCENE INVITATION KEYS SEEDED BY THE CURRENT ANGULAR MOMENTUM OF THE 3D WHIRLPOOL.",
+                        actionLabel: "GENERATE_NEW_SERIAL()",
+                        actionType: "keygen"
+                    },
+                    {
+                        slot: "TOP_RIGHT",
+                        angleOffset: 0.5,
+                        targetX: 275,
+                        targetY: -115,
+                        title: "╔══[ 0x03_B // YM2149_ARPEGGIO_TRACKER ]══╗",
+                        asciiArt: [
+                            "ROW | CH1:PULSE | CH2:BASS  | CH3:NOISE",
+                            "----+-----------+-----------+----------",
+                            "00  | C-5 01 F  | C-2 02 F  | --- -- - ",
+                            "01  | D#5 01 C  | --- -- -  | C-4 03 8 ",
+                            "02  | G-5 01 C  | G-2 02 E  | --- -- - ",
+                            "03  | A#5 01 A  | --- -- -  | F-4 03 6 "
+                        ].join("\n"),
+                        body: "REALTIME PROCEDURAL WEB AUDIO API CHIPTUNE SEQUENCER. TOGGLE AUDIO IN THE TOP HUD OR TRIGGER A SYNTH DROP BELOW.",
+                        actionLabel: "TOGGLE_CHIPTUNE_TRACKER ♪",
+                        actionType: "audio"
+                    },
+                    {
+                        slot: "BOTTOM_RIGHT",
+                        angleOffset: 5.5,
+                        targetX: 250,
+                        targetY: 150,
+                        title: "╔══[ 0x03_C // VECTOR_BOB_CREDITS ]══╗",
+                        asciiArt: [
+                            "CODE + SHADERS :: VORTEX_ARCHITECT",
+                            "ASCII + ANSI   :: PHOSPHOR_MONK",
+                            "CHIP_SYNTH     :: SID_ALCHEMIST"
+                        ].join("\n"),
+                        body: "100% PURE VANILLA JAVASCRIPT + THREE.JS + GLSL. ZERO EXTERNAL AUDIO OR IMAGE ASSETS.",
+                        actionLabel: "ENTER_EOF_TRANSMISSION ▼",
+                        actionType: "next"
+                    }
+                ]
+            },
+            {
+                id: "0x04",
+                code: "EOF_TRANSMISSION // JOIN THE SCENE",
+                badge: "EOF_UPLINK",
+                cards: [
+                    {
+                        slot: "TOP_LEFT",
+                        angleOffset: 2.35,
+                        targetX: -275,
+                        targetY: -115,
+                        title: "╔══[ 0x04_A // BBS_DIALUP_UPLINK ]══╗",
+                        asciiArt: [
+                            "ATDT +1-555-0xC0DE-64K",
+                            "CONNECT 115200 / V.92 / ARQ",
+                            "╔═════════════════════════════════╗",
+                            "║  WELCOME TO SINGULARITY BBS     ║",
+                            "║  NODES: 64/64  RATIO: 1:3 LEECH ║",
+                            "╚═════════════════════════════════╝"
+                        ].join("\n"),
+                        body: "YOU HAVE REACHED THE DEEPEST LAYER OF THE WHIRLPOOL. SCROLL UP TO REVERSE POLARITY AND EJECT PREVIOUS LAYERS FROM THE CORE.",
+                        actionLabel: "TRANSMIT_SYSOP_PACKET()",
+                        actionType: "transmit"
+                    },
+                    {
+                        slot: "TOP_RIGHT",
+                        angleOffset: 0.5,
+                        targetX: 275,
+                        targetY: -115,
+                        title: "╔══[ 0x04_B // DEMOPARTY_INVITATION ]══╗",
+                        asciiArt: [
+                            "PARTY : REVISION / ASSEMBLY / EVOKE",
+                            "COMPO : PC 64K INTRO & ANSI/ASCII",
+                            "COORD : 52.3759° N, 9.7320° E",
+                            "STATUS: [INVITATION_VERIFIED]"
+                        ].join("\n"),
+                        body: "BRING YOUR SHADERS, YOUR CRT MONITORS, AND YOUR FASTEST ASM ROUTINES. THE SCENE NEVER DIES.",
+                        actionLabel: "COPY_BBS_INVITE_KEY()",
+                        actionType: "copy"
+                    },
+                    {
+                        slot: "BOTTOM_LEFT",
+                        angleOffset: 3.9,
+                        targetX: -245,
+                        targetY: 150,
+                        title: "╔══[ 0x04_C // LOOP_SINGULARITY_RESET ]══╗",
+                        asciiArt: [
+                            "   ╭──────────────────────────────╮",
+                            "   │  JMP 0x0000 // REBOOT_INTRO  │",
+                            "   ╰──────────────┬───────────────╯",
+                            "                  └──► [VORTEX_CORE]"
+                        ].join("\n"),
+                        body: "REWIND THE VORTEX TIMELINE TO WATCH ALL FIVE HACKER MODULES SPIRAL BACK OUT FROM THE EVENT HORIZON.",
+                        actionLabel: "⏪ REWIND_TO_0x00_MANIFEST",
+                        actionType: "rewind"
+                    }
+                ]
+            }
+        ];
+
+        /***********************************************************************
+         * 2. STATE & SCROLL TIMELINE ENGINE
+         ***********************************************************************/
+        const state = {
+            scrollProgress: 0,       // Continuous current section index [0.00 -> 4.00]
+            targetScroll: 0,         // Target section index driven by wheel/touch/buttons
+            scrollVelocity: 0,       // Instantaneous delta for boosting whirlpool twist
+            gravityMultiplier: 1.2,
+            twistMultiplier: 1.5,
+            glyphDensity: 1.0,
+            warpPulse: 0,            // Temporary burst from Warp button or fast scrolling
+            mouseX: 0,
+            mouseY: 0,
+            palette: 'matrix',
+            colors: {
+                primary: new THREE.Color('#00ff41'),
+                secondary: new THREE.Color('#00f0ff'),
+                accent: new THREE.Color('#ffb000')
+            },
+            audioActive: false,
+            fps: 60
+        };
+
+        const PALETTES = {
+            matrix:   { primary: '#00ff41', secondary: '#00f0ff', accent: '#ffb000' },
+            amber:    { primary: '#ffb000', secondary: '#ff4500', accent: '#00f0ff' },
+            amiga:    { primary: '#00f0ff', secondary: '#ff007f', accent: '#ffe600' },
+            redalert: { primary: '#ff1e38', secondary: '#ff9900', accent: '#ffffff' }
+        };
+
+        /***********************************************************************
+         * 3. BUILD DOM CARDS & TIMELINE HUD
+         ***********************************************************************/
+        const stageEl = document.getElementById('vortex-stage');
+        const timelineStepsEl = document.getElementById('timeline-steps');
+        const cardElements = []; // { sectionIndex, cardIndex, el, preEl, statusEl, data }
+
+        function initDOMSections() {
+            stageEl.innerHTML = '';
+            timelineStepsEl.innerHTML = '';
+
+            SECTIONS.forEach((sec, sIdx) => {
+                // Build Left Rail Timeline indicator
+                const stepDiv = document.createElement('div');
+                stepDiv.id = `rail-step-${sIdx}`;
+                stepDiv.className = 'px-1.5 py-1 rounded border border-transparent cursor-pointer transition-all flex items-center justify-between';
+                stepDiv.onclick = () => jumpToSection(sIdx);
+                stepDiv.innerHTML = `
+                    <span>[${sec.id}] ${sec.badge}</span>
+                    <span class="rail-state text-[10px] opacity-75">WAIT</span>
+                `;
+                timelineStepsEl.appendChild(stepDiv);
+
+                // Build Cards for this section
+                sec.cards.forEach((card, cIdx) => {
+                    const cardEl = document.createElement('article');
+                    cardEl.className = 'vortex-card box-glow rounded p-3 text-xs flex flex-col gap-2';
+                    cardEl.innerHTML = `
+                        <div class="flex items-center justify-between border-b border-current/40 pb-1 font-vt text-base tracking-wide text-glow">
+                            <span>${card.title}</span>
+                            <span class="text-[10px] font-mono px-1 border border-current">${sec.id}</span>
+                        </div>
+                        <pre class="font-mono text-[10px] sm:text-[11px] leading-tight overflow-x-auto p-2 bg-black/60 border border-current/25 text-[var(--secondary)]">${card.asciiArt}</pre>
+                        <p class="text-[11px] leading-relaxed opacity-90">${card.body}</p>
+                        <div class="flex items-center justify-between pt-1 border-t border-current/30 gap-2">
+                            <span class="card-status text-[10px] font-mono text-[var(--accent)] truncate">[READY // ORBIT_LOCK]</span>
+                            <button class="ascii-btn px-2.5 py-1 rounded text-[10px] font-bold whitespace-nowrap" data-sec="${sIdx}" data-card="${cIdx}">
+                                ${card.actionLabel}
+                            </button>
+                        </div>
+                    `;
+
+                    const btn = cardEl.querySelector('button');
+                    const preEl = cardEl.querySelector('pre');
+                    const statusEl = cardEl.querySelector('.card-status');
+
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        handleCardAction(card.actionType, preEl, statusEl, sIdx);
+                    });
+
+                    stageEl.appendChild(cardEl);
+                    cardElements.push({
+                        sectionIndex: sIdx,
+                        cardIndex: cIdx,
+                        el: cardEl,
+                        preEl,
+                        statusEl,
+                        data: card
+                    });
+                });
+            });
+        }
+
+        /***********************************************************************
+         * 4. INTERACTIVE TERMINAL SUB-MODULE ACTIONS
+         ***********************************************************************/
+        function handleCardAction(type, preEl, statusEl, sIdx) {
+            playBlipSound(660, 0.07);
+            if (type === 'next') {
+                jumpToSection(Math.min(SECTIONS.length - 1, sIdx + 1));
+                statusEl.textContent = '[FLUSHING -> VORTEX_CORE]';
+            } else if (type === 'rewind') {
+                jumpToSection(0);
+                triggerHyperWarp();
+            } else if (type === 'warp') {
+                triggerHyperWarp();
+                statusEl.textContent = '[SINGULARITY_OVERCLOCKED!]';
+            } else if (type === 'ping') {
+                const ms = (Math.random() * 4 + 0.4).toFixed(2);
+                statusEl.textContent = `[PONG: 64 BYTES IN ${ms}ms // TTL=64]`;
+                triggerMiniGlitch(preEl);
+            } else if (type === 'decrypt') {
+                statusEl.textContent = '[RSA-4096 SIGNATURE: VALID_SCENE_REL]';
+                triggerMiniGlitch(preEl);
+            } else if (type === 'scramble') {
+                const glyphs = "01#$@%&*+=-~^!?/\\|<>";
+                const lines = preEl.textContent.split('\n');
+                preEl.textContent = lines.map((l, idx) => {
+                    if (idx === 2) {
+                        let row = "│";
+                        for (let i = 0; i < 8; i++) {
+                            const g = glyphs[Math.floor(Math.random() * glyphs.length)];
+                            row += ` ${g} │`;
+                        }
+                        return row;
+                    }
+                    return l;
+                }).join('\n');
+                statusEl.textContent = '[VRAM_ATLAS_RESEEDED]';
+            } else if (type === 'hexmutate') {
+                const hexChars = "0123456789ABCDEF";
+                const randByte = () => hexChars[Math.floor(Math.random()*16)] + hexChars[Math.floor(Math.random()*16)];
+                const addrs = ["0x7FFF0010", "0x7FFF0018", "0x7FFF0020", "0x7FFF0028"];
+                preEl.textContent = addrs.map(a => {
+                    const bytes = Array.from({length: 8}, randByte).join(' ');
+                    return `${a}: ${bytes}  .VORTEX.`;
+                }).join('\n');
+                statusEl.textContent = '[RING-0_PAYLOAD_WRITTEN]';
+            } else if (type === 'tone2600') {
+                playBlipSound(2600, 0.35);
+                statusEl.textContent = '[2600Hz_TRUNK_SEIZED // AT&T_OK]';
+            } else if (type === 'keygen') {
+                const seg = () => Math.floor(0x1000 + Math.random() * 0xEFFF).toString(16).toUpperCase();
+                const serial = `0x${seg()}-C0DE-${seg()}-${seg()}-64KB`;
+                preEl.textContent = [
+                    "┌─────────────────────────────────────┐",
+                    "│ USER: SCENE_OPERATIVE_99            │",
+                    `│ KEY : ${serial}    │`,
+                    "│ SIG : [VERIFIED_BY_SINGULARITY]     │",
+                    "└─────────────────────────────────────┘"
+                ].join('\n');
+                statusEl.textContent = '[KEYGEN_HASH_COMPUTED]';
+            } else if (type === 'audio') {
+                toggleChiptune();
+                statusEl.textContent = state.audioActive ? '[YM2149_SYNTH: RUNNING]' : '[YM2149_SYNTH: MUTED]';
+            } else if (type === 'transmit') {
+                statusEl.textContent = '[PACKET_INGESTED_BY_WORMHOLE]';
+                triggerHyperWarp();
+            } else if (type === 'copy') {
+                const tempInput = document.createElement('textarea');
+                tempInput.value = 'ATDT +1-555-0xC0DE-64K // INVITE_KEY: VORTEX-2026-64K';
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                statusEl.textContent = '[INVITE_KEY_COPIED_TO_CLIPBOARD]';
+            }
+        }
+
+        function triggerMiniGlitch(el) {
+            el.classList.add('glitch-active');
+            setTimeout(() => el.classList.remove('glitch-active'), 280);
+        }
+
+        /***********************************************************************
+         * 5. THREE.JS 3D WHIRLPOOL ENGINE
+         * Combines:
+         *  A) 4,800 Custom GLSL Vortex Particles spiraling down the funnel
+         *  B) 600 Instanced 3D ASCII Glyph Quads swirling into the vortex core
+         *  C) Wireframe Funnel Mesh showing the gravitational topology
+         *  D) Dynamic Ingestion Burst Particles when cards collapse into core
+         ***********************************************************************/
+        let scene, camera, renderer;
+        let particleSystem, particleMaterial;
+        let asciiInstancedMesh, asciiInstanceData = [];
+        let funnelWireframe;
+        const dummyObj = new THREE.Object3D();
+
+        function createAsciiTextureAtlas() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const glyphs = "01#$@%&*+=-~^<>?";
+            ctx.font = 'bold 46px "Fira Code", monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#ffffff';
+
+            for (let i = 0; i < 16; i++) {
+                const x = i * 64 + 32;
+                ctx.fillText(glyphs[i], x, 34);
+            }
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.NearestFilter;
+            return texture;
+        }
+
+        function initThreeWhirlpool() {
+            const container = document.getElementById('webgl-container');
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x040504, 0.032);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+            camera.position.set(0, 0, 17);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x040504, 1);
+            container.appendChild(renderer.domElement);
+
+            // A. Custom GLSL Whirlpool Particle System
+            const particleCount = 4800;
+            const pGeo = new THREE.BufferGeometry();
+            const radii = new Float32Array(particleCount);
+            const angles = new Float32Array(particleCount);
+            const speeds = new Float32Array(particleCount);
+            const tiers = new Float32Array(particleCount);
+            const dummyPositions = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount; i++) {
+                radii[i] = Math.random(); // Normalized radial lifecycle [0..1]
+                angles[i] = Math.random() * Math.PI * 2;
+                speeds[i] = 0.4 + Math.random() * 0.9;
+                tiers[i] = Math.random(); // Used for color mix
+                dummyPositions[i * 3] = 0;
+                dummyPositions[i * 3 + 1] = 0;
+                dummyPositions[i * 3 + 2] = 0;
+            }
+
+            pGeo.setAttribute('position', new THREE.BufferAttribute(dummyPositions, 3));
+            pGeo.setAttribute('aRadius', new THREE.BufferAttribute(radii, 1));
+            pGeo.setAttribute('aAngle', new THREE.BufferAttribute(angles, 1));
+            pGeo.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1));
+            pGeo.setAttribute('aTier', new THREE.BufferAttribute(tiers, 1));
+
+            particleMaterial = new THREE.ShaderMaterial({
+                transparent: true,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending,
+                uniforms: {
+                    uTime: { value: 0 },
+                    uScrollOffset: { value: 0 },
+                    uTwist: { value: 1.5 },
+                    uGravity: { value: 1.2 },
+                    uWarp: { value: 0 },
+                    uColorPrimary: { value: state.colors.primary },
+                    uColorSecondary: { value: state.colors.secondary },
+                    uColorAccent: { value: state.colors.accent }
+                },
+                vertexShader: `
+                    attribute float aRadius;
+                    attribute float aAngle;
+                    attribute float aSpeed;
+                    attribute float aTier;
+
+                    uniform float uTime;
+                    uniform float uScrollOffset;
+                    uniform float uTwist;
+                    uniform float uGravity;
+                    uniform float uWarp;
+
+                    varying float vRadiusNorm;
+                    varying float vTier;
+
+                    void main() {
+                        // Continuous inward suction modulated by scroll & time
+                        float flow = fract(aRadius - uTime * 0.055 * aSpeed * uGravity - uScrollOffset * 0.35);
+                        vRadiusNorm = flow;
+                        vTier = aTier;
+
+                        // Non-linear radial distribution (concentrated around funnel rim and throat)
+                        float r = 0.25 + pow(flow, 1.35) * 18.5;
+
+                        // Keplerian differential rotation: inner core spins dramatically faster
+                        float angularVel = (5.2 * uTwist + uWarp * 6.0) / (r * 0.45 + 0.28);
+                        float theta = aAngle + uTime * aSpeed * 0.45 + angularVel;
+
+                        // Funnel Z depth sinkhole: deeper as r -> 0
+                        float zDepth = -24.0 * pow(1.0 - flow, 2.6) * uGravity;
+                        // Subtle spiral wave ripple along the funnel walls
+                        zDepth += sin(theta * 3.0 - uTime * 3.0) * 0.35 * flow;
+
+                        vec3 pos = vec3(cos(theta) * r, sin(theta) * r, zDepth);
+
+                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                        gl_Position = projectionMatrix * mvPosition;
+
+                        // Particle size scales with perspective and brightens near rim
+                        float baseSize = mix(2.2, 6.5, aTier) * (1.0 + uWarp * 0.8);
+                        gl_PointSize = baseSize * (16.0 / -mvPosition.z);
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 uColorPrimary;
+                    uniform vec3 uColorSecondary;
+                    uniform vec3 uColorAccent;
+
+                    varying float vRadiusNorm;
+                    varying float vTier;
+
+                    void main() {
+                        // Crisp square/cross ASCII pixel aesthetic
+                        vec2 uv = gl_PointCoord - vec2(0.5);
+                        float dist = max(abs(uv.x), abs(uv.y));
+                        if (dist > 0.48) discard;
+
+                        // Inner hollow box for half the particles to mimic terminal glyphs
+                        if (vTier > 0.55 && dist < 0.22) discard;
+
+                        vec3 col = mix(uColorSecondary, uColorPrimary, smoothstep(0.0, 0.65, vRadiusNorm));
+                        if (vTier > 0.86) col = uColorAccent;
+
+                        // Fade out smoothly at deep singularity throat and outer boundary
+                        float alpha = smoothstep(0.02, 0.22, vRadiusNorm) * (1.0 - smoothstep(0.85, 1.0, vRadiusNorm));
+                        gl_FragColor = vec4(col, alpha * 0.88);
+                    }
+                `
+            });
+
+            particleSystem = new THREE.Points(pGeo, particleMaterial);
+            scene.add(particleSystem);
+
+            // B. Instanced 3D ASCII Glyph Planes Orbiting inside the Whirlpool
+            const glyphCount = 520;
+            const planeGeo = new THREE.PlaneGeometry(0.62, 0.62);
+            // Shift UVs per instance isn't built-in on basic material without shader, so we inject custom UV offset attribute
+            const glyphIndices = new Float32Array(glyphCount);
+            for (let i = 0; i < glyphCount; i++) {
+                glyphIndices[i] = Math.floor(Math.random() * 16);
+                asciiInstanceData.push({
+                    baseRadius: Math.random(),
+                    baseAngle: Math.random() * Math.PI * 2,
+                    speed: 0.45 + Math.random() * 0.85,
+                    spinSpeed: (Math.random() - 0.5) * 3.0,
+                    scale: 0.55 + Math.random() * 1.15
+                });
+            }
+            planeGeo.setAttribute('aGlyphIndex', new THREE.InstancedBufferAttribute(glyphIndices, 1));
+
+            const atlasTexture = createAsciiTextureAtlas();
+            const asciiShaderMat = new THREE.ShaderMaterial({
+                transparent: true,
+                depthWrite: false,
+                side: THREE.DoubleSide,
+                blending: THREE.AdditiveBlending,
+                uniforms: {
+                    uAtlas: { value: atlasTexture },
+                    uColor: { value: state.colors.primary },
+                    uDensity: { value: 1.0 }
+                },
+                vertexShader: `
+                    attribute float aGlyphIndex;
+                    varying vec2 vUv;
+                    varying float vDepthFade;
+
+                    void main() {
+                        // Map 0..16 glyph index to horizontal atlas slice
+                        vUv = vec2((uv.x + aGlyphIndex) / 16.0, uv.y);
+                        vec4 worldPos = instanceMatrix * vec4(position, 1.0);
+                        vec4 mvPos = modelViewMatrix * worldPos;
+                        // Fade glyphs deep in the vortex hole
+                        vDepthFade = smoothstep(-26.0, -2.0, worldPos.z);
+                        gl_Position = projectionMatrix * mvPos;
+                    }
+                `,
+                fragmentShader: `
+                    uniform sampler2D uAtlas;
+                    uniform vec3 uColor;
+                    uniform float uDensity;
+                    varying vec2 vUv;
+                    varying float vDepthFade;
+
+                    void main() {
+                        vec4 tex = texture2D(uAtlas, vUv);
+                        if (tex.a < 0.2) discard;
+                        gl_FragColor = vec4(uColor, tex.a * vDepthFade * 0.85 * clamp(uDensity, 0.2, 1.5));
+                    }
+                `
+            });
+
+            asciiInstancedMesh = new THREE.InstancedMesh(planeGeo, asciiShaderMat, glyphCount);
+            scene.add(asciiInstancedMesh);
+
+            // C. Gravitational Funnel Grid Wireframe (Cyberpunk Vector Well)
+            const funnelGeo = new THREE.BufferGeometry();
+            const funnelPositions = [];
+            const rings = 22;
+            const segments = 48;
+
+            for (let rIdx = 0; rIdx < rings; rIdx++) {
+                const norm = rIdx / (rings - 1);
+                const radius = 0.35 + Math.pow(norm, 1.4) * 17.0;
+                const z = -23.0 * Math.pow(1.0 - norm, 2.5);
+
+                for (let s = 0; s < segments; s++) {
+                    const a1 = (s / segments) * Math.PI * 2;
+                    const a2 = ((s + 1) / segments) * Math.PI * 2;
+                    funnelPositions.push(
+                        Math.cos(a1) * radius, Math.sin(a1) * radius, z,
+                        Math.cos(a2) * radius, Math.sin(a2) * radius, z
+                    );
+                }
+            }
+            // Add radial spiral ribs into the hole
+            const ribs = 16;
+            for (let b = 0; b < ribs; b++) {
+                const baseA = (b / ribs) * Math.PI * 2;
+                for (let rIdx = 0; rIdx < rings - 1; rIdx++) {
+                    const n1 = rIdx / (rings - 1);
+                    const n2 = (rIdx + 1) / (rings - 1);
+                    const rad1 = 0.35 + Math.pow(n1, 1.4) * 17.0;
+                    const rad2 = 0.35 + Math.pow(n2, 1.4) * 17.0;
+                    const z1 = -23.0 * Math.pow(1.0 - n1, 2.5);
+                    const z2 = -23.0 * Math.pow(1.0 - n2, 2.5);
+                    const twist1 = baseA + (1.0 - n1) * 2.4;
+                    const twist2 = baseA + (1.0 - n2) * 2.4;
+
+                    funnelPositions.push(
+                        Math.cos(twist1) * rad1, Math.sin(twist1) * rad1, z1,
+                        Math.cos(twist2) * rad2, Math.sin(twist2) * rad2, z2
+                    );
+                }
+            }
+
+            funnelGeo.setAttribute('position', new THREE.Float32BufferAttribute(funnelPositions, 3));
+            const funnelMat = new THREE.LineBasicMaterial({
+                color: state.colors.primary,
+                transparent: true,
+                opacity: 0.16,
+                blending: THREE.AdditiveBlending
+            });
+            funnelWireframe = new THREE.LineSegments(funnelGeo, funnelMat);
+            scene.add(funnelWireframe);
+        }
+
+        /***********************************************************************
+         * 6. SCROLL-DRIVEN WHIRLPOOL INGESTION & EMERGENCE PHYSICS
+         * Maps each section's relative offset `rel = state.scrollProgress - sectionIndex`
+         *
+         * - When `rel === 0`: Section is locked in clean terminal reading position.
+         * - When `rel > 0` (User scrolls DOWN):
+         *     The section above is pulled inward (`radius -> 0`), rotated around
+         *     the vortex center (`theta += rel * spiralTorque`), scaled down into
+         *     the Z-axis depth sinkhole, and ingested into the singularity core!
+         * - When `rel < 0` (Next section waiting inside the vortex core):
+         *     As `rel` approaches `0` from `-1`, the new section emerges from
+         *     the deep center of the whirlpool (`radius: 0 -> targetRadius`),
+         *     un-spiraling outward into crisp terminal alignment.
+         * - Scrolling UP reverses the equation seamlessly!
+         ***********************************************************************/
+        function updateCardsVortexPhysics(time) {
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const isMobile = vw < 768;
+            const centerX = vw * 0.5;
+            const centerY = vh * 0.5;
+
+            // Responsive spread scale so cards stay legible on any screen
+            const spreadScaleX = isMobile ? Math.min(1, (vw * 0.22) / 280) : Math.min(1.12, (vw * 0.26) / 280);
+            const spreadScaleY = isMobile ? 0.85 : Math.min(1.08, (vh * 0.26) / 140);
+
+            cardElements.forEach((item) => {
+                const { sectionIndex, cardIndex, el, statusEl, data } = item;
+
+                // Relative timeline distance from current scrollProgress
+                // Stagger each of the 3 cards slightly so they fall into / emerge from the whirlpool in a cascade
+                const stagger = (cardIndex - 1) * 0.075;
+                const rel = (state.scrollProgress - sectionIndex) + stagger;
+
+                // Cull cards far outside active window [-1.15 .. +1.15]
+                if (Math.abs(rel) > 1.12) {
+                    el.style.display = 'none';
+                    return;
+                }
+                el.style.display = 'flex';
+
+                // Base target resting coordinates relative to screen center
+                let baseX = data.targetX * spreadScaleX;
+                let baseY = data.targetY * spreadScaleY;
+
+                // On mobile screens, stack the 3 cards vertically around center
+                if (isMobile) {
+                    baseX = 0;
+                    baseY = (cardIndex - 1) * 145;
+                }
+
+                const baseRadius = Math.hypot(baseX, baseY);
+                const baseTheta = Math.atan2(baseY, baseX);
+
+                let x = baseX;
+                let y = baseY;
+                let z = 0;
+                let rotZ = 0;
+                let rotX = 0;
+                let rotY = 0;
+                let scale = 1;
+                let opacity = 1;
+                let blur = 0;
+
+                const absRel = Math.abs(rel);
+
+                if (absRel < 0.03) {
+                    // LOCKED IN HARMONIC ORBIT (Crisp readable terminal state)
+                    const hoverFloat = Math.sin(time * 2.0 + cardIndex * 2.1) * 3.5;
+                    y += hoverFloat;
+                    statusEl.textContent = '[LOCKED // ORBIT_STABLE]';
+                } else if (rel > 0) {
+                    // INGESTION PHASE (Content above falls INTO the whirlpool core)
+                    // Progress t goes from 0 (at rest) -> 1 (swallowed into vortex center)
+                    const t = Math.min(1, rel / 0.95);
+                    const suctionCurve = Math.pow(t, 1.35 * state.gravityMultiplier);
+
+                    // Spiral angle winds tightly inward clockwise
+                    const spiralAngle = baseTheta + suctionCurve * (5.2 * state.twistMultiplier);
+                    // Radius collapses to 0 at singularity center
+                    const currentRadius = baseRadius * (1.0 - suctionCurve);
+
+                    x = Math.cos(spiralAngle) * currentRadius;
+                    y = Math.sin(spiralAngle) * currentRadius;
+
+                    // Plunge deep down the Z-axis funnel (-950px)
+                    z = -suctionCurve * 950 * state.gravityMultiplier;
+                    rotZ = suctionCurve * 340 * state.twistMultiplier;
+                    rotX = suctionCurve * 55;
+                    rotY = -suctionCurve * 40;
+                    scale = Math.max(0.02, 1.0 - suctionCurve * 0.95);
+                    opacity = Math.max(0, 1.0 - Math.pow(t, 1.8));
+                    blur = suctionCurve * 6;
+
+                    statusEl.textContent = `[INGESTING -> CORE ${(t * 100).toFixed(0)}%]`;
+                } else {
+                    // EMERGENCE PHASE (Next content below emerges OUT FROM the whirlpool core)
+                    // Progress t goes from 1 (deep inside vortex core) -> 0 (locked in orbit)
+                    const t = Math.min(1, Math.abs(rel) / 0.95);
+                    const emergeCurve = Math.pow(t, 1.3);
+
+                    // Unwinds counter-clockwise from the deep center out to target slot
+                    const spiralAngle = baseTheta - emergeCurve * (4.8 * state.twistMultiplier);
+                    const currentRadius = baseRadius * (1.0 - emergeCurve);
+
+                    x = Math.cos(spiralAngle) * currentRadius;
+                    y = Math.sin(spiralAngle) * currentRadius;
+
+                    z = -emergeCurve * 900;
+                    rotZ = -emergeCurve * 300 * state.twistMultiplier;
+                    rotX = -emergeCurve * 50;
+                    rotY = emergeCurve * 35;
+                    scale = Math.max(0.02, 1.0 - emergeCurve * 0.95);
+                    opacity = Math.max(0, 1.0 - Math.pow(t, 1.6));
+                    blur = emergeCurve * 5;
+
+                    statusEl.textContent = `[EMERGING <- SINGULARITY ${((1 - t) * 100).toFixed(0)}%]`;
+                }
+
+                // Subtle mouse parallax
+                x += state.mouseX * 14 * (1 - absRel);
+                y += state.mouseY * 14 * (1 - absRel);
+
+                el.style.transform = `translate3d(calc(${ centerX + x }px - 50%), calc(${ centerY + y }px - 50%), ${z.toFixed(1)}px) rotateZ(${rotZ.toFixed(1)}deg) rotateX(${rotX.toFixed(1)}deg) rotateY(${rotY.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
+                el.style.opacity = opacity.toFixed(3);
+                el.style.filter = blur > 0.4 ? `blur(${blur.toFixed(1)}px)` : 'none';
+                el.style.pointerEvents = absRel < 0.25 ? 'auto' : 'none';
+            });
+
+            // Update Left Rail & Top Nav active indicators
+            const activeIdx = Math.round(state.scrollProgress);
+            SECTIONS.forEach((_, idx) => {
+                const navBtn = document.getElementById(`nav-btn-${idx}`);
+                if (navBtn) {
+                    navBtn.classList.toggle('active', idx === activeIdx);
+                }
+                const railEl = document.getElementById(`rail-step-${idx}`);
+                if (railEl) {
+                    const stateSpan = railEl.querySelector('.rail-state');
+                    const diff = state.scrollProgress - idx;
+                    if (Math.abs(diff) < 0.22) {
+                        railEl.style.borderColor = 'var(--primary)';
+                        railEl.style.background = 'rgba(0, 255, 65, 0.12)';
+                        stateSpan.textContent = 'ORBIT';
+                    } else if (diff > 0) {
+                        railEl.style.borderColor = 'transparent';
+                        railEl.style.background = 'transparent';
+                        stateSpan.textContent = 'INGESTED';
+                    } else {
+                        railEl.style.borderColor = 'transparent';
+                        railEl.style.background = 'transparent';
+                        stateSpan.textContent = 'IN_CORE';
+                    }
+                }
+            });
+
+            // Update HUD Readouts
+            const pct = Math.round((state.scrollProgress / (SECTIONS.length - 1)) * 100);
+            document.getElementById('scroll-pct').textContent = `${pct.toString().padStart(2, '0')}%`;
+            document.getElementById('hud-depth').textContent = (state.scrollProgress * 64.0).toFixed(1) + 'K';
+            const rpm = Math.round(140 * state.twistMultiplier + Math.abs(state.scrollVelocity) * 1800 + state.warpPulse * 450);
+            document.getElementById('hud-rpm').textContent = rpm;
+
+            const physLabel = document.getElementById('physics-state-label');
+            if (Math.abs(state.scrollVelocity) > 0.004) {
+                physLabel.textContent = state.scrollVelocity > 0
+                    ? 'STATE: ▼ INGESTING_TO_CORE'
+                    : 'STATE: ▲ EJECTING_FROM_CORE';
+            } else {
+                physLabel.textContent = 'STATE: HARMONIC_ORBIT_LOCK';
+            }
+
+            // Center Reticle dynamic spin
+            const reticle = document.getElementById('vortex-reticle');
+            const retScale = 1 + Math.min(0.45, Math.abs(state.scrollVelocity) * 18 + state.warpPulse * 0.35);
+            reticle.style.transform = `rotate(${(time * 45 * state.twistMultiplier).toFixed(1)}deg) scale(${retScale.toFixed(2)})`;
+            document.getElementById('core-coord').textContent = `z=-${(state.scrollProgress * 16).toFixed(2)} θ=${(time % 6.28).toFixed(2)}`;
+        }
+
+        /***********************************************************************
+         * 7. DEMOSCENE RASTER BARS & SINE-WAVE SCROLLER CANVASES
+         ***********************************************************************/
+        const rasterCanvas = document.getElementById('raster-canvas');
+        const rasterCtx = rasterCanvas.getContext('2d');
+        const scrollerCanvas = document.getElementById('sine-scroller-canvas');
+        const scrollerCtx = scrollerCanvas.getContext('2d');
+
+        const SCROLLER_TEXT = " *** GREETINGS TO ALL DEMOSCENERS & UNDERGROUND PHREAKERS: FARBRAUSCH // FUTURE CREW // FAIRLIGHT // RAZOR 1911 // CONSPIRACY // LEMON. // TRSI // ASD // STILL // LOGICOMA // PANIC *** SCROLL DOWN TO FEED THE 3D ASCII WHIRLPOOL SINGULARITY *** ";
+        let scrollerOffset = 0;
+
+        function renderDemosceneCanvases(time) {
+            // 1. Amiga Copper Raster Bar
+            if (rasterCanvas.width !== rasterCanvas.clientWidth) {
+                rasterCanvas.width = rasterCanvas.clientWidth;
+                rasterCanvas.height = 12;
+            }
+            const rw = rasterCanvas.width;
+            const rh = rasterCanvas.height;
+            rasterCtx.fillStyle = '#040504';
+            rasterCtx.fillRect(0, 0, rw, rh);
+
+            const pal = PALETTES[state.palette];
+            const bars = [pal.primary, pal.secondary, pal.accent, pal.primary];
+            bars.forEach((col, i) => {
+                const center = (Math.sin(time * 2.4 + i * 1.4) * 0.42 + 0.5) * rw;
+                const barWidth = rw * 0.22;
+                const grad = rasterCtx.createLinearGradient(center - barWidth, 0, center + barWidth, 0);
+                grad.addColorStop(0, 'transparent');
+                grad.addColorStop(0.5, col);
+                grad.addColorStop(1, 'transparent');
+                rasterCtx.fillStyle = grad;
+                rasterCtx.fillRect(center - barWidth, 0, barWidth * 2, rh);
+            });
+
+            // 2. Classic Sine-Wave Bitmap Font Scroller
+            if (scrollerCanvas.width !== scrollerCanvas.clientWidth) {
+                scrollerCanvas.width = scrollerCanvas.clientWidth;
+                scrollerCanvas.height = 28;
+            }
+            const sw = scrollerCanvas.width;
+            const sh = scrollerCanvas.height;
+            scrollerCtx.clearRect(0, 0, sw, sh);
+            scrollerCtx.font = 'bold 14px "Fira Code", monospace';
+            scrollerCtx.fillStyle = pal.primary;
+
+            scrollerOffset += 1.8 + Math.abs(state.scrollVelocity) * 40;
+            const charWidth = 9.2;
+            const totalTextPx = SCROLLER_TEXT.length * charWidth;
+            if (scrollerOffset > totalTextPx) scrollerOffset -= totalTextPx;
+
+            const startChar = Math.floor(scrollerOffset / charWidth);
+            const pixelRemainder = scrollerOffset % charWidth;
+            const visibleChars = Math.ceil(sw / charWidth) + 2;
+
+            for (let i = 0; i < visibleChars; i++) {
+                const charIdx = (startChar + i) % SCROLLER_TEXT.length;
+                const ch = SCROLLER_TEXT[charIdx];
+                const x = i * charWidth - pixelRemainder;
+                const y = 17 + Math.sin(time * 5.0 + (startChar + i) * 0.28) * 5.5;
+                scrollerCtx.fillText(ch, x, y);
+            }
+        }
+
+        /***********************************************************************
+         * 8. PROCEDURAL WEB AUDIO API CHIPTUNE & VORTEX DRONE SYNTHESIZER
+         * Zero external MP3s—pure oscillator arpeggio tracker + vortex sub-bass
+         ***********************************************************************/
+        let audioCtx = null;
+        let droneOsc = null;
+        let droneGain = null;
+        let chiptuneInterval = null;
+        let arpStep = 0;
+
+        // C Minor Demoscene Tracker Pattern (MIDI frequencies)
+        const TRACKER_NOTES = [
+            130.81, 155.56, 196.00, 233.08, // C3, Eb3, G3, Bb3
+            261.63, 311.13, 392.00, 466.16, // C4, Eb4, G4, Bb4
+            523.25, 392.00, 311.13, 261.63,
+            174.61, 207.65, 261.63, 349.23  // F3, Ab3, C4, F4
+        ];
+
+        function initAudioEngine() {
+            if (audioCtx) return;
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContextClass();
+
+            // Continuous Vortex Sub-Drone modulated by scroll velocity
+            droneOsc = audioCtx.createOscillator();
+            droneGain = audioCtx.createGain();
+            droneOsc.type = 'sawtooth';
+            droneOsc.frequency.setValueAtTime(55, audioCtx.currentTime);
+
+            // Lowpass filter for dark cyberpunk rumble
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(160, audioCtx.currentTime);
+
+            droneGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            droneOsc.connect(filter);
+            filter.connect(droneGain);
+            droneGain.connect(audioCtx.destination);
+            droneOsc.start();
+        }
+
+        function toggleChiptune() {
+            initAudioEngine();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            state.audioActive = !state.audioActive;
+            const iconEl = document.getElementById('audio-icon');
+            const btnEl = document.getElementById('audio-toggle-btn');
+
+            if (state.audioActive) {
+                iconEl.textContent = '[♪ CHIPTUNE: ON]';
+                btnEl.classList.add('active');
+                droneGain.gain.setTargetAtTime(0.06, audioCtx.currentTime, 0.1);
+
+                // 140 BPM 16th-note YM2149 Square-Wave Arpeggiator
+                chiptuneInterval = setInterval(() => {
+                    if (!state.audioActive) return;
+                    const freq = TRACKER_NOTES[arpStep % TRACKER_NOTES.length];
+                    const transpose = Math.round(state.scrollProgress) * 2;
+                    const finalFreq = freq * Math.pow(2, transpose / 12);
+                    playTrackerNote(finalFreq, 0.095);
+                    arpStep++;
+                }, 115);
+            } else {
+                iconEl.textContent = '[♪ CHIPTUNE: OFF]';
+                btnEl.classList.remove('active');
+                droneGain.gain.setTargetAtTime(0.0, audioCtx.currentTime, 0.1);
+                if (chiptuneInterval) clearInterval(chiptuneInterval);
+            }
+        }
+
+        function playTrackerNote(freq, duration) {
+            if (!audioCtx || !state.audioActive) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = (arpStep % 4 === 0) ? 'square' : 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+            // Rapid chiptune arpeggio pitch slide
+            if (arpStep % 2 === 0) {
+                osc.frequency.setValueAtTime(freq * 1.498, now + duration * 0.45);
+            }
+
+            gain.gain.setValueAtTime(0.045, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + duration);
+        }
+
+        function playBlipSound(freq = 880, duration = 0.08) {
+            if (!audioCtx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.exponentialRampToValueAtTime(freq * 0.5, now + duration);
+            gain.gain.setValueAtTime(0.05, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + duration);
+        }
+
+        /***********************************************************************
+         * 9. CONTROLS, EVENTS & SCROLL HANDLERS
+         ***********************************************************************/
+        function jumpToSection(index) {
+            state.targetScroll = Math.max(0, Math.min(SECTIONS.length - 1, index));
+            state.warpPulse = Math.max(state.warpPulse, 0.45);
+            playBlipSound(520 + index * 120, 0.09);
+        }
+
+        function stepScroll(dir) {
+            const next = Math.round(state.targetScroll) + dir;
+            jumpToSection(next);
+        }
+
+        function ingestCurrentAndAdvance() {
+            const next = Math.floor(state.targetScroll + 1);
+            if (next < SECTIONS.length) {
+                jumpToSection(next);
+            } else {
+                jumpToSection(0);
+            }
+        }
+
+        function triggerHyperWarp() {
+            state.warpPulse = 1.6;
+            document.body.classList.add('glitch-active');
+            playBlipSound(1480, 0.18);
+            setTimeout(() => document.body.classList.remove('glitch-active'), 360);
+        }
+
+        function setPalette(name) {
+            state.palette = name;
+            document.body.setAttribute('data-theme', name);
+            const pal = PALETTES[name];
+            state.colors.primary.set(pal.primary);
+            state.colors.secondary.set(pal.secondary);
+            state.colors.accent.set(pal.accent);
+
+            if (particleMaterial) {
+                particleMaterial.uniforms.uColorPrimary.value.copy(state.colors.primary);
+                particleMaterial.uniforms.uColorSecondary.value.copy(state.colors.secondary);
+                particleMaterial.uniforms.uColorAccent.value.copy(state.colors.accent);
+            }
+            if (asciiInstancedMesh) {
+                asciiInstancedMesh.material.uniforms.uColor.value.copy(state.colors.primary);
+            }
+            if (funnelWireframe) {
+                funnelWireframe.material.color.copy(state.colors.primary);
+            }
+
+            ['matrix', 'amber', 'amiga', 'redalert'].forEach(p => {
+                const btn = document.getElementById(`pal-${p}`);
+                if (btn) btn.classList.toggle('active', p === name);
+            });
+            playBlipSound(980, 0.06);
+        }
+
+        const paletteOrder = ['matrix', 'amber', 'amiga', 'redalert'];
+        function CyclePaletteMobile() {
+            const idx = (paletteOrder.indexOf(state.palette) + 1) % paletteOrder.length;
+            setPalette(paletteOrder[idx]);
+        }
+
+        function bindEvents() {
+            // Wheel scrolling feeds the whirlpool continuously
+            window.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY * 0.0014;
+                state.targetScroll = Math.max(0, Math.min(SECTIONS.length - 1, state.targetScroll + delta));
+            }, { passive: false });
+
+            // Touch swipe for mobile/tablet
+            let touchStartY = 0;
+            window.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    touchStartY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    const dy = touchStartY - e.touches[0].clientY;
+                    touchStartY = e.touches[0].clientY;
+                    state.targetScroll = Math.max(0, Math.min(SECTIONS.length - 1, state.targetScroll + dy * 0.0045));
+                }
+            }, { passive: true });
+
+            // Keyboard ArrowUp / ArrowDown / PageUp / PageDown
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+                    e.preventDefault();
+                    stepScroll(1);
+                } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                    e.preventDefault();
+                    stepScroll(-1);
+                }
+            });
+
+            // Mouse movement tilts the 3D Whirlpool Camera
+            window.addEventListener('mousemove', (e) => {
+                state.mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                state.mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+            });
+
+            // HUD Sliders
+            const gravSlider = document.getElementById('ctrl-gravity');
+            gravSlider.addEventListener('input', (e) => {
+                state.gravityMultiplier = parseFloat(e.target.value);
+                document.getElementById('val-gravity').textContent = state.gravityMultiplier.toFixed(1) + 'x';
+                if (particleMaterial) particleMaterial.uniforms.uGravity.value = state.gravityMultiplier;
+            });
+
+            const twistSlider = document.getElementById('ctrl-twist');
+            twistSlider.addEventListener('input', (e) => {
+                state.twistMultiplier = parseFloat(e.target.value);
+                document.getElementById('val-twist').textContent = state.twistMultiplier.toFixed(1) + 'x';
+                if (particleMaterial) particleMaterial.uniforms.uTwist.value = state.twistMultiplier;
+            });
+
+            const densitySlider = document.getElementById('ctrl-density');
+            densitySlider.addEventListener('input', (e) => {
+                state.glyphDensity = parseFloat(e.target.value);
+                document.getElementById('val-density').textContent = Math.round(state.glyphDensity * 100) + '%';
+                if (asciiInstancedMesh) asciiInstancedMesh.material.uniforms.uDensity.value = state.glyphDensity;
+            });
+
+            // Responsive Resize
+            window.addEventListener('resize', () => {
+                if (!camera || !renderer) return;
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        /***********************************************************************
+         * 10. MAIN ANIMATION LOOP
+         ***********************************************************************/
+        let lastTime = performance.now();
+        let frameCounter = 0;
+        let fpsLastCheck = performance.now();
+
+        function animate(now = performance.now()) {
+            requestAnimationFrame(animate);
+
+            const dt = Math.min(0.1, (now - lastTime) * 0.001);
+            lastTime = now;
+            const elapsedTime = now * 0.001;
+
+            // FPS Counter
+            frameCounter++;
+            if (now - fpsLastCheck >= 500) {
+                state.fps = Math.min(144, Math.round((frameCounter * 1000) / (now - fpsLastCheck)));
+                document.getElementById('hud-fps').textContent = state.fps;
+                frameCounter = 0;
+                fpsLastCheck = now;
+            }
+
+            // Smooth spring-damped scroll interpolation + snap when idle
+            const prevScroll = state.scrollProgress;
+            state.scrollProgress += (state.targetScroll - state.scrollProgress) * 0.095;
+            state.scrollVelocity = state.scrollProgress - prevScroll;
+
+            // Decay warp pulse
+            state.warpPulse *= 0.93;
+
+            // Modulate Web Audio vortex sub-drone pitch with scroll velocity
+            if (droneOsc && audioCtx && state.audioActive) {
+                const targetDroneFreq = 55 + Math.abs(state.scrollVelocity) * 1400 + state.warpPulse * 90;
+                droneOsc.frequency.setTargetAtTime(targetDroneFreq, audioCtx.currentTime, 0.06);
+            }
+
+            // Update GLSL Whirlpool Particle Uniforms
+            if (particleMaterial) {
+                particleMaterial.uniforms.uTime.value = elapsedTime;
+                particleMaterial.uniforms.uScrollOffset.value = state.scrollProgress;
+                particleMaterial.uniforms.uWarp.value = state.warpPulse + Math.abs(state.scrollVelocity) * 16.0;
+            }
+
+            // Update 520 Instanced 3D ASCII Glyphs swirling into the funnel
+            if (asciiInstancedMesh) {
+                const totalGlyphs = asciiInstanceData.length;
+                const boost = 1.0 + Math.abs(state.scrollVelocity) * 22.0 + state.warpPulse * 1.5;
+
+                for (let i = 0; i < totalGlyphs; i++) {
+                    const g = asciiInstanceData[i];
+                    // Radial suction cycle [0..1]
+                    const flow = ((g.baseRadius - elapsedTime * 0.065 * g.speed * state.gravityMultiplier - state.scrollProgress * 0.45) % 1 + 1) % 1;
+                    const r = 0.35 + Math.pow(flow, 1.35) * 15.5;
+                    const angularVel = (4.8 * state.twistMultiplier * boost) / (r * 0.5 + 0.3);
+                    const theta = g.baseAngle + elapsedTime * g.speed * 0.5 + angularVel;
+                    const zDepth = -22.0 * Math.pow(1.0 - flow, 2.4) * state.gravityMultiplier;
+
+                    dummyObj.position.set(
+                        Math.cos(theta) * r,
+                        Math.sin(theta) * r,
+                        zDepth
+                    );
+                    dummyObj.rotation.set(0, 0, theta + elapsedTime * g.spinSpeed);
+                    const s = g.scale * state.glyphDensity * Math.min(1.2, flow * 1.6 + 0.15);
+                    dummyObj.scale.set(s, s, s);
+                    dummyObj.updateMatrix();
+                    asciiInstancedMesh.setMatrixAt(i, dummyObj.matrix);
+                }
+                asciiInstancedMesh.instanceMatrix.needsUpdate = true;
+            }
+
+            // Rotate Funnel Wireframe
+            if (funnelWireframe) {
+                funnelWireframe.rotation.z = elapsedTime * 0.25 * state.twistMultiplier + state.scrollProgress * 1.8;
+            }
+
+            // Subtle Camera Parallax & Scroll Dive
+            if (camera) {
+                const targetCamX = state.mouseX * 2.2;
+                const targetCamY = -state.mouseY * 2.2;
+                const targetCamZ = 17.0 - Math.min(4.5, Math.abs(state.scrollVelocity) * 85 + state.warpPulse * 3.0);
+                camera.position.x += (targetCamX - camera.position.x) * 0.08;
+                camera.position.y += (targetCamY - camera.position.y) * 0.08;
+                camera.position.z += (targetCamZ - camera.position.z) * 0.1;
+                camera.lookAt(0, 0, -6);
+            }
+
+            // Update 3D Terminal Cards Swirling Into / Out of the Whirlpool
+            updateCardsVortexPhysics(elapsedTime);
+
+            // Render Demoscene Copper Raster Bars & Sine Scroller
+            renderDemosceneCanvases(elapsedTime);
+
+            // Render Three.js Scene
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        window.onload = function () {
+            initDOMSections();
+            initThreeWhirlpool();
+            bindEvents();
+            animate();
+        };
+    </script>
+</body>
+</html>
